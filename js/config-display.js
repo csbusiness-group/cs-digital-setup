@@ -74,8 +74,11 @@ function displayConfig(config) {
     <div class="config-header">
       <h2>Votre configuration Claude.ai est prête${config.client_name ? ", " + config.client_name : ""} !</h2>
       <p>Suivez les étapes ci-dessous pour tout importer dans Claude.ai</p>
+      <p class="config-trust-note">Session reprise possible en cas d'interruption. Les données diagnostics sont conservées au maximum 30 jours, puis supprimées automatiquement.</p>
     </div>
   `;
+
+  resultsDiv.appendChild(createDataControlSection(config));
 
   // Bannière Niveau 1
   const level1 = document.createElement("div");
@@ -238,6 +241,74 @@ function displayConfig(config) {
 
   container.appendChild(resultsDiv);
   container.scrollTop = container.scrollHeight;
+}
+
+function createDataControlSection(config) {
+  const section = document.createElement("div");
+  section.className = "config-data-control";
+  section.innerHTML = `
+    <h3>Confidentialité & contrôle</h3>
+    <p>Copiez d'abord votre configuration complète. Ensuite, vous pouvez effacer vos données de diagnostic de manière irréversible.</p>
+    <div class="config-data-actions">
+      <button id="copy-full-config-btn" class="config-data-btn" type="button">Copier la config complète</button>
+      <button id="erase-data-btn" class="config-data-btn danger" type="button">Effacer mes données</button>
+    </div>
+    <p id="erase-data-status" class="config-data-status"></p>
+  `;
+
+  const copyBtn = section.querySelector("#copy-full-config-btn");
+  const eraseBtn = section.querySelector("#erase-data-btn");
+  const status = section.querySelector("#erase-data-status");
+
+  copyBtn?.addEventListener("click", async () => {
+    const fullText =
+      config.markdown_bundle ||
+      config.structured?.custom_instructions ||
+      JSON.stringify(config, null, 2);
+    try {
+      await navigator.clipboard.writeText(fullText);
+      copyBtn.textContent = "Config copiée !";
+      setTimeout(() => (copyBtn.textContent = "Copier la config complète"), 2000);
+    } catch {
+      copyBtn.textContent = "Copie impossible";
+    }
+  });
+
+  eraseBtn?.addEventListener("click", async () => {
+    const ok = window.confirm(
+      "Cette action est irréversible. Vérifiez d'abord que vous avez copié votre configuration. Continuer ?"
+    );
+    if (!ok) return;
+    const typed = window.prompt('Confirmez en tapant SUPPRIMER');
+    if (typed !== "SUPPRIMER") {
+      status.textContent = "Suppression annulée.";
+      return;
+    }
+
+    eraseBtn.disabled = true;
+    eraseBtn.textContent = "Suppression...";
+    try {
+      const res = await fetch(`${SUPABASE_FUNCTIONS_URL_CONFIG}/erase-my-data`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${window.CS_JWT_TOKEN || ""}`,
+        },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || "Erreur de suppression");
+      }
+      status.textContent = "Vos données de diagnostic ont été supprimées.";
+      eraseBtn.textContent = "Données supprimées";
+    } catch (err) {
+      status.textContent = `Erreur: ${err.message || "suppression impossible"}`;
+      eraseBtn.disabled = false;
+      eraseBtn.textContent = "Effacer mes données";
+    }
+  });
+
+  return section;
 }
 
 // ============================================
