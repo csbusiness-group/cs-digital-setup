@@ -55,6 +55,7 @@ let sessionId = null;
 let sessionData = null;
 let isStreaming = false;
 let conversationHistory = [];
+let diagnosticMode = "express";
 
 // ============================================
 // Generate unique session ID for this diagnostic
@@ -80,6 +81,9 @@ const messagesContainer = document.getElementById("messages-container");
 const typingIndicator = document.getElementById("typing-indicator");
 const chatInput = document.getElementById("chat-input");
 const sendBtn = document.getElementById("send-btn");
+const modeSelector = document.getElementById("mode-selector");
+const modeExpressBtn = document.getElementById("mode-express-btn");
+const modeDeepBtn = document.getElementById("mode-deep-btn");
 
 // ============================================
 // Initialisation
@@ -146,12 +150,27 @@ async function init() {
     // Show chat screen
     showChat();
 
-    // First visit: send welcome message to start diagnostic
+    // User selects desired diagnostic depth before first question.
+    diagnosticMode = await chooseDiagnosticMode();
     await sendFirstMessage();
   } catch (err) {
     console.error("Init error:", err);
     showError();
   }
+}
+
+function chooseDiagnosticMode() {
+  return new Promise((resolve) => {
+    const done = (mode) => {
+      diagnosticMode = mode;
+      if (modeSelector) modeSelector.style.display = "none";
+      resolve(mode);
+    };
+
+    if (modeSelector) modeSelector.style.display = "block";
+    modeExpressBtn?.addEventListener("click", () => done("express"), { once: true });
+    modeDeepBtn?.addEventListener("click", () => done("deep"), { once: true });
+  });
 }
 
 // ============================================
@@ -310,7 +329,10 @@ async function sendFirstMessage() {
       },
       body: JSON.stringify({
         session_id: sessionId,
-        message: "Bonjour",
+        message:
+          diagnosticMode === "deep"
+            ? "[DIAGNOSTIC_MODE:DEEP] Bonjour, je veux un diagnostic approfondi."
+            : "[DIAGNOSTIC_MODE:EXPRESS] Bonjour, je veux un diagnostic rapide mais premium.",
         conversation_history: conversationHistory,
         client_name: userEmail,
       }),
@@ -362,7 +384,13 @@ async function sendFirstMessage() {
     bubble.removeAttribute("id");
 
     // Store in conversation history
-    conversationHistory.push({ role: "user", content: "Bonjour" });
+    conversationHistory.push({
+      role: "user",
+      content:
+        diagnosticMode === "deep"
+          ? "[DIAGNOSTIC_MODE:DEEP] Bonjour, je veux un diagnostic approfondi."
+          : "[DIAGNOSTIC_MODE:EXPRESS] Bonjour, je veux un diagnostic rapide mais premium.",
+    });
     conversationHistory.push({ role: "assistant", content: cleanFinal });
   } catch (err) {
     console.error("First message error:", err);
