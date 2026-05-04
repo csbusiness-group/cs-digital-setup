@@ -6,6 +6,56 @@
 const SUPABASE_FUNCTIONS_URL_CONFIG =
   "https://ptksijwyvecufcvcpntp.supabase.co/functions/v1";
 
+function extractGuideSectionsFromConfig(config) {
+  const sections = [];
+  const structured = config?.structured || {};
+  const living = structured?.living_proposal || {};
+
+  const customInstructions =
+    config?.custom_instructions || structured?.custom_instructions || "";
+  if (customInstructions) {
+    sections.push({
+      title: "Instructions personnalisées",
+      instruction:
+        "Allez dans Claude.ai → Paramètres → Instructions personnalisées, puis collez ce bloc.",
+      content: customInstructions,
+    });
+  }
+
+  if (Array.isArray(living.agents)) {
+    for (const a of living.agents) {
+      sections.push({
+        title: `Agent — ${a.role || "Agent"}`,
+        instruction:
+          a.trigger
+            ? `Créez l'agent dans Claude puis vérifiez le déclencheur: ${a.trigger}.`
+            : "Créez l'agent dans Claude et collez le prompt.",
+        content: a.prompt || "",
+      });
+    }
+  }
+
+  if (Array.isArray(living.routines)) {
+    for (const r of living.routines) {
+      const details = [
+        r.trigger_timing ? `Quand: ${r.trigger_timing}` : "",
+        Array.isArray(r.linked_agents) && r.linked_agents.length
+          ? `Agents liés: ${r.linked_agents.join(", ")}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" | ");
+      sections.push({
+        title: `Routine — ${r.title || "Routine"}`,
+        instruction: details || "Planifiez cette routine dans Claude.",
+        content: r.prompt || "",
+      });
+    }
+  }
+
+  return sections.filter((s) => (s.content || "").trim().length > 0);
+}
+
 // ============================================
 // Génération de la config (STREAMING)
 // ============================================
@@ -320,12 +370,15 @@ function createDataControlSection(config) {
 }
 
 function downloadGuideHtml(config) {
-  const sections = Array.from(document.querySelectorAll(".config-section")).map((el) => {
+  let sections = Array.from(document.querySelectorAll(".config-section")).map((el) => {
     const title = el.querySelector("h3")?.textContent || "";
     const instruction = el.querySelector(".config-instruction")?.textContent || "";
     const content = el.querySelector(".config-content")?.textContent || "";
     return { title, instruction, content };
   });
+  if (!sections.length) {
+    sections = extractGuideSectionsFromConfig(config);
+  }
 
   const tocHtml = sections
     .map(
