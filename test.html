@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test - CS Digital Setup</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <style>
+    body { margin: 0; padding: 0; }
+    .chat-container { width: 100%; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div class="chat-container" id="app"></div>
+
+  <script>
+    // Mode test - bypasse l'authentification
+    window.TEST_MODE = true;
+    window.TEST_EMAIL = new URLSearchParams(window.location.search).get('email') || 'test@example.com';
+
+    // Redirige vers le chat
+    window.location.href = 'chat.html?test=true&email=' + encodeURIComponent(window.TEST_EMAIL);
+  </script>
+</body>
+</html>

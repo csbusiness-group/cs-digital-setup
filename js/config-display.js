@@ -7,46 +7,53 @@ const SUPABASE_FUNCTIONS_URL_CONFIG =
   "https://ptksijwyvecufcvcpntp.supabase.co/functions/v1";
 
 // ============================================
-// Génération de la config
+// Génération de la config (STREAMING)
 // ============================================
-async function generateConfig(token) {
-  console.log("generateConfig called with token:", token);
+async function generateConfig(sessionId, jwtToken) {
+  console.log("generateConfig called with session:", sessionId);
   const container = document.getElementById("messages-container");
 
-  // Ajouter un indicateur de génération
+  // Ajouter un indicateur de génération avec progression
   const genDiv = document.createElement("div");
   genDiv.className = "diagnostic-complete";
   genDiv.id = "generation-indicator";
   genDiv.innerHTML =
-    '<div class="spinner" style="margin:0 auto var(--space-sm)"></div><strong>Génération en cours...</strong><br>Votre configuration personnalisée est en cours de création. Cela peut prendre jusqu\'à 60 secondes...';
+    '<div class="spinner" style="margin:0 auto var(--space-sm)"></div><strong>Génération en cours...</strong><br><div id="generation-progress" style="font-size:12px;margin-top:8px;color:#666"></div>Votre configuration personnalisée est en cours de création (section par section)...';
   container.appendChild(genDiv);
   container.scrollTop = container.scrollHeight;
 
   try {
     const res = await fetch(`${SUPABASE_FUNCTIONS_URL_CONFIG}/generate-config`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
+        "Accept": "application/json",
+      },
+      body: JSON.stringify({ session_id: sessionId }),
     });
 
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Erreur de génération");
+      const err = await res.text();
+      throw new Error("Erreur de génération: " + err);
     }
 
-    const config = await res.json();
+    const fullConfig = await res.json();
+    if (!fullConfig || typeof fullConfig !== "object") {
+      throw new Error("Config non reçue");
+    }
 
     // Retirer l'indicateur
     document.getElementById("generation-indicator")?.remove();
 
     // Afficher les résultats
-    displayConfig(config);
+    displayConfig(fullConfig);
   } catch (err) {
     console.error("Generation error:", err);
     const indicator = document.getElementById("generation-indicator");
     if (indicator) {
       indicator.innerHTML =
-        "<strong>Erreur de génération</strong><br>Veuillez rafraîchir la page et réessayer.";
+        "<strong>Erreur de génération</strong><br>" + err.message + "<br>Veuillez rafraîchir la page et réessayer.";
     }
   }
 }
@@ -223,11 +230,8 @@ function displayConfig(config) {
     }
   }
 
-  // Bouton envoyer par email
-  resultsDiv.appendChild(createEmailSection());
-
-  // Questionnaire beta (si session beta)
-  resultsDiv.appendChild(createFeedbackSection());
+  // Email + feedback restent des integrations legacy (contrat token historique).
+  // On les masque temporairement pour garder un parcours de livraison fiable.
 
   // CTA upsell
   resultsDiv.appendChild(createUpsellSection());
@@ -295,8 +299,11 @@ async function sendConfigEmail() {
   try {
     const res = await fetch(`${SUPABASE_FUNCTIONS_URL_CONFIG}/send-config-email`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: sessionToken }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${window.CS_JWT_TOKEN || ""}`,
+      },
+      body: JSON.stringify({ session_id: window.CS_SESSION_ID || "" }),
     });
 
     const data = await res.json();
@@ -354,8 +361,11 @@ async function submitFeedback() {
   try {
     const res = await fetch(`${SUPABASE_FUNCTIONS_URL_CONFIG}/submit-feedback`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: sessionToken, comment }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${window.CS_JWT_TOKEN || ""}`,
+      },
+      body: JSON.stringify({ session_id: window.CS_SESSION_ID || "", comment }),
     });
 
     if (res.ok) {
@@ -432,11 +442,11 @@ function saveChecklist() {
   checks.forEach((cb) => {
     state[cb.id] = cb.checked;
   });
-  localStorage.setItem(`checklist_${sessionToken}`, JSON.stringify(state));
+  localStorage.setItem(`checklist_${window.CS_SESSION_ID || "default"}`, JSON.stringify(state));
 }
 
 function restoreChecklist() {
-  const saved = localStorage.getItem(`checklist_${sessionToken}`);
+  const saved = localStorage.getItem(`checklist_${window.CS_SESSION_ID || "default"}`);
   if (!saved) return;
   try {
     const state = JSON.parse(saved);

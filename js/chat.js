@@ -27,7 +27,7 @@ function compressMessages(messages, keepLast = 5) {
 
     for (const msg of chunk) {
       if (msg.role === "user") {
-        const firstLine = msg.split("\n")[0].trim();
+        const firstLine = (msg.content || "").split("\n")[0].trim();
         if (firstLine.length > 0) {
           const truncated = firstLine.length > 60 ? firstLine.slice(0, 60) + "..." : firstLine;
           keyPoints.push(`Q: ${truncated}`);
@@ -60,7 +60,14 @@ let conversationHistory = [];
 // Generate unique session ID for this diagnostic
 // ============================================
 function generateSessionId() {
-  return "session_" + Date.now() + "_" + Math.random().toString(36).slice(2, 9);
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
 // ============================================
@@ -78,9 +85,51 @@ const sendBtn = document.getElementById("send-btn");
 // Initialisation
 // ============================================
 async function init() {
-  // Extract JWT from localStorage (set by auth/callback.html)
-  jwtToken = localStorage.getItem("jwt_token");
-  userEmail = localStorage.getItem("user_email");
+  // Check for beta test mode
+  const urlParams = new URLSearchParams(window.location.search);
+  const isTest = urlParams.get("test") === "true";
+  const testEmail = urlParams.get("email");
+  const betaToken = urlParams.get("token");
+
+  if (betaToken) {
+    // Beta invite mode: exchange session token for a real Supabase JWT.
+    try {
+      const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/exchange-beta-token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: betaToken }),
+      });
+      if (!res.ok) {
+        throw new Error("Lien beta invalide ou expire.");
+      }
+      const data = await res.json();
+      jwtToken = data.access_token || null;
+      userEmail = data.user_email || null;
+      if (jwtToken && userEmail) {
+        localStorage.setItem("jwt_token", jwtToken);
+        localStorage.setItem("user_email", userEmail);
+        // Remove token from URL for cleaner UX and to avoid accidental sharing.
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch (err) {
+      console.error("Beta token exchange error:", err);
+      showError();
+      return;
+    }
+  } else if (isTest && testEmail) {
+    // Beta test mode: create a temporary session
+    jwtToken = "beta_test_token_" + Date.now();
+    userEmail = testEmail;
+    localStorage.setItem("jwt_token", jwtToken);
+    localStorage.setItem("user_email", userEmail);
+    localStorage.setItem("is_beta_test", "true");
+  } else {
+    // Extract JWT from localStorage (set by auth/callback.html)
+    jwtToken = localStorage.getItem("jwt_token");
+    userEmail = localStorage.getItem("user_email");
+  }
 
   if (!jwtToken || !userEmail) {
     console.log("No JWT found, redirecting to home");
@@ -90,6 +139,8 @@ async function init() {
 
   // Generate a unique session ID for this diagnostic session
   sessionId = generateSessionId();
+  window.CS_JWT_TOKEN = jwtToken;
+  window.CS_SESSION_ID = sessionId;
 
   try {
     // Show chat screen
@@ -171,7 +222,27 @@ function showDiagnosticComplete() {
   chatInput.placeholder = "Diagnostic terminé";
 
   // Lancer la génération de la config
-  generateConfig(sessionToken);
+  generateConfig(sessionId, jwtToken);
+}
+
+function appendStreamDeltaFromEvent(data, acc) {
+  if (!data || typeof data !== "object") return acc;
+
+  // Legacy format handled by previous frontend parser.
+  if (typeof data.text === "string") {
+    return acc + data.text;
+  }
+
+  // Anthropic stream format.
+  if (
+    data.type === "content_block_delta" &&
+    data.delta &&
+    typeof data.delta.text === "string"
+  ) {
+    return acc + data.delta.text;
+  }
+
+  return acc;
 }
 
 // ============================================
@@ -250,9 +321,10 @@ async function sendFirstMessage() {
         if (!jsonStr) continue;
         try {
           const data = JSON.parse(jsonStr);
-          if (data.done) break;
-          if (data.text) {
-            fullText += data.text;
+          if (data.done || data.type === "message_stop") break;
+          const nextText = appendStreamDeltaFromEvent(data, fullText);
+          if (nextText !== fullText) {
+            fullText = nextText;
             const cleanText = fullText
               .replace(/\[META\][\s\S]*?\[\/META\]/g, "")
               .replace(/\[DIAGNOSTIC_COMPLETE\]/g, "")
@@ -364,23 +436,25 @@ async function sendMessage(text) {
             // Stream terminé
             break;
           }
+          if (data.type === "message_stop") {
+            break;
+          }
 
           if (data.error) {
             fullText += "\n\n⚠️ Une erreur est survenue. Veuillez réessayer.";
             break;
           }
 
-          if (data.text) {
-            fullText += data.text;
-
-            // Mettre à jour la bulle en temps réel (sans les META)
+          const nextText = appendStreamDeltaFromEvent(data, fullText);
+          if (nextText !== fullText) {
+            fullText = nextText;
             const cleanText = fullText
               .replace(/\[META\][\s\S]*?\[\/META\]/g, "")
               .replace(/\[DIAGNOSTIC_COMPLETE\]/g, "")
               .trim();
             bubble.innerHTML = markdownToHtml(cleanText);
             scrollToBottom();
-          }
+          } 
         } catch {
           // JSON invalide, ignorer
         }
