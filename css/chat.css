@@ -216,6 +216,28 @@ html, body {
   align-items: flex-end;
 }
 
+.generate-now-btn {
+  margin-top: var(--space-xs);
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--border-light);
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.generate-now-btn:hover {
+  border-color: var(--terracotta);
+  color: var(--terracotta-light);
+}
+
+.generate-now-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .chat-input {
   flex: 1;
   padding: var(--space-sm) var(--space-md);

@@ -56,6 +56,7 @@ let sessionData = null;
 let isStreaming = false;
 let conversationHistory = [];
 let diagnosticMode = "express";
+let configGenerationStarted = false;
 
 // ============================================
 // Generate unique session ID for this diagnostic
@@ -81,6 +82,7 @@ const messagesContainer = document.getElementById("messages-container");
 const typingIndicator = document.getElementById("typing-indicator");
 const chatInput = document.getElementById("chat-input");
 const sendBtn = document.getElementById("send-btn");
+const generateNowBtn = document.getElementById("generate-now-btn");
 const modeSelector = document.getElementById("mode-selector");
 const modeExpressBtn = document.getElementById("mode-express-btn");
 const modeDeepBtn = document.getElementById("mode-deep-btn");
@@ -231,9 +233,12 @@ function createStreamingBubble() {
 }
 
 function showDiagnosticComplete() {
+  if (configGenerationStarted) return;
+  configGenerationStarted = true;
   // Désactiver la saisie
   chatInput.disabled = true;
   sendBtn.disabled = true;
+  if (generateNowBtn) generateNowBtn.disabled = true;
   chatInput.placeholder = "Diagnostic terminé";
 
   // Lancer la génération de la config
@@ -332,7 +337,7 @@ async function sendFirstMessage() {
         message:
           diagnosticMode === "deep"
             ? "[DIAGNOSTIC_MODE:DEEP] Bonjour, je veux un diagnostic approfondi."
-            : "[DIAGNOSTIC_MODE:EXPRESS] Bonjour, je veux un diagnostic rapide mais premium.",
+            : "[DIAGNOSTIC_MODE:EXPRESS] Bonjour, je veux un diagnostic rapide et utile.",
         conversation_history: conversationHistory,
         client_name: userEmail,
       }),
@@ -389,7 +394,7 @@ async function sendFirstMessage() {
       content:
         diagnosticMode === "deep"
           ? "[DIAGNOSTIC_MODE:DEEP] Bonjour, je veux un diagnostic approfondi."
-          : "[DIAGNOSTIC_MODE:EXPRESS] Bonjour, je veux un diagnostic rapide mais premium.",
+          : "[DIAGNOSTIC_MODE:EXPRESS] Bonjour, je veux un diagnostic rapide et utile.",
     });
     conversationHistory.push({ role: "assistant", content: cleanFinal });
   } catch (err) {
@@ -665,6 +670,10 @@ sendBtn.addEventListener("click", () => {
 });
 
 micBtn.addEventListener("click", toggleRecording);
+generateNowBtn?.addEventListener("click", () => {
+  if (isStreaming || configGenerationStarted) return;
+  showDiagnosticComplete();
+});
 
 chatInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
