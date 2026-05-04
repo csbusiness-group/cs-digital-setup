@@ -59,6 +59,7 @@ let diagnosticMode = "express";
 let configGenerationStarted = false;
 let recoveryEmail = null;
 let promptLanguage = "fr";
+let sessionStorageKey = null;
 
 // ============================================
 // Generate unique session ID for this diagnostic
@@ -148,8 +149,14 @@ async function init() {
     return;
   }
 
-  // Generate a unique session ID for this diagnostic session
-  sessionId = generateSessionId();
+  // Reuse previous session for this user by default (prevents losing history on refresh).
+  sessionStorageKey = `last_session_id_${String(userEmail).toLowerCase()}`;
+  const savedSessionId = localStorage.getItem(sessionStorageKey);
+  const looksLikeUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  sessionId = savedSessionId && looksLikeUuid.test(savedSessionId)
+    ? savedSessionId
+    : generateSessionId();
+  localStorage.setItem(sessionStorageKey, sessionId);
   window.CS_JWT_TOKEN = jwtToken;
   window.CS_SESSION_ID = sessionId;
 
@@ -238,6 +245,9 @@ async function startNewSession() {
   if (!ok) return;
 
   sessionId = generateSessionId();
+  if (sessionStorageKey) {
+    localStorage.setItem(sessionStorageKey, sessionId);
+  }
   window.CS_SESSION_ID = sessionId;
   conversationHistory = [];
   configGenerationStarted = false;
