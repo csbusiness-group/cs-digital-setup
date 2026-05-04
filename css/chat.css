@@ -97,6 +97,23 @@ html, body {
   font-size: var(--font-size-sm);
 }
 
+.mode-email-label {
+  display: block;
+  margin-top: var(--space-sm);
+  margin-bottom: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.mode-email-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+}
+
 .mode-selector-actions {
   margin-top: var(--space-sm);
   display: flex;

@@ -57,6 +57,7 @@ let isStreaming = false;
 let conversationHistory = [];
 let diagnosticMode = "express";
 let configGenerationStarted = false;
+let recoveryEmail = null;
 
 // ============================================
 // Generate unique session ID for this diagnostic
@@ -87,6 +88,7 @@ const newSessionBtn = document.getElementById("new-session-btn");
 const modeSelector = document.getElementById("mode-selector");
 const modeExpressBtn = document.getElementById("mode-express-btn");
 const modeDeepBtn = document.getElementById("mode-deep-btn");
+const recoveryEmailInput = document.getElementById("recovery-email");
 
 // ============================================
 // Initialisation
@@ -166,10 +168,18 @@ function chooseDiagnosticMode() {
   return new Promise((resolve) => {
     const done = (mode) => {
       diagnosticMode = mode;
+      recoveryEmail = (recoveryEmailInput?.value || userEmail || "").trim().toLowerCase();
+      if (recoveryEmail) {
+        localStorage.setItem("recovery_email", recoveryEmail);
+      }
       if (modeSelector) modeSelector.style.display = "none";
       resolve(mode);
     };
 
+    if (recoveryEmailInput) {
+      recoveryEmailInput.value =
+        localStorage.getItem("recovery_email") || userEmail || "";
+    }
     if (modeSelector) modeSelector.style.display = "block";
     modeExpressBtn?.addEventListener("click", () => done("express"), { once: true });
     modeDeepBtn?.addEventListener("click", () => done("deep"), { once: true });
@@ -364,8 +374,8 @@ async function sendFirstMessage() {
         session_id: sessionId,
         message:
           diagnosticMode === "deep"
-            ? "[DIAGNOSTIC_MODE:DEEP] Bonjour, je veux un diagnostic approfondi."
-            : "[DIAGNOSTIC_MODE:EXPRESS] Bonjour, je veux un diagnostic rapide et utile.",
+            ? `[DIAGNOSTIC_MODE:DEEP][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
+            : `[DIAGNOSTIC_MODE:EXPRESS][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
         conversation_history: conversationHistory,
         client_name: userEmail,
       }),
@@ -421,8 +431,8 @@ async function sendFirstMessage() {
       role: "user",
       content:
         diagnosticMode === "deep"
-          ? "[DIAGNOSTIC_MODE:DEEP] Bonjour, je veux un diagnostic approfondi."
-          : "[DIAGNOSTIC_MODE:EXPRESS] Bonjour, je veux un diagnostic rapide et utile.",
+          ? `[DIAGNOSTIC_MODE:DEEP][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
+          : `[DIAGNOSTIC_MODE:EXPRESS][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
     });
     conversationHistory.push({ role: "assistant", content: cleanFinal });
   } catch (err) {

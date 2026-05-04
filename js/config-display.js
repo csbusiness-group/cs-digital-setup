@@ -251,12 +251,14 @@ function createDataControlSection(config) {
     <p>Copiez d'abord votre configuration complète. Ensuite, vous pouvez effacer vos données de diagnostic de manière irréversible.</p>
     <div class="config-data-actions">
       <button id="copy-full-config-btn" class="config-data-btn" type="button">Copier la config complète</button>
+      <button id="download-html-guide-btn" class="config-data-btn" type="button">Télécharger le guide HTML</button>
       <button id="erase-data-btn" class="config-data-btn danger" type="button">Effacer mes données</button>
     </div>
     <p id="erase-data-status" class="config-data-status"></p>
   `;
 
   const copyBtn = section.querySelector("#copy-full-config-btn");
+  const htmlBtn = section.querySelector("#download-html-guide-btn");
   const eraseBtn = section.querySelector("#erase-data-btn");
   const status = section.querySelector("#erase-data-status");
 
@@ -272,6 +274,12 @@ function createDataControlSection(config) {
     } catch {
       copyBtn.textContent = "Copie impossible";
     }
+  });
+
+  htmlBtn?.addEventListener("click", () => {
+    downloadGuideHtml(config);
+    htmlBtn.textContent = "Guide téléchargé";
+    setTimeout(() => (htmlBtn.textContent = "Télécharger le guide HTML"), 2000);
   });
 
   eraseBtn?.addEventListener("click", async () => {
@@ -309,6 +317,53 @@ function createDataControlSection(config) {
   });
 
   return section;
+}
+
+function downloadGuideHtml(config) {
+  const sections = Array.from(document.querySelectorAll(".config-section")).map((el) => {
+    const title = el.querySelector("h3")?.textContent || "";
+    const instruction = el.querySelector(".config-instruction")?.textContent || "";
+    const content = el.querySelector(".config-content")?.textContent || "";
+    return { title, instruction, content };
+  });
+  const stepsHtml = sections
+    .map(
+      (s, idx) => `
+      <section style="border:1px solid #ddd;border-radius:8px;padding:14px;margin:14px 0;">
+        <h3 style="margin:0 0 6px;">Étape ${idx + 1} — ${escapeHtml(s.title)}</h3>
+        <p style="margin:0 0 10px;color:#555;">${escapeHtml(s.instruction)}</p>
+        <pre style="white-space:pre-wrap;background:#f6f6f6;padding:10px;border-radius:6px;">${escapeHtml(s.content)}</pre>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+          <input type="checkbox" /> Vérifié / importé
+        </label>
+      </section>`,
+    )
+    .join("");
+
+  const html = `<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Guide d'installation Claude</title></head>
+<body style="font-family:Inter,Arial,sans-serif;max-width:900px;margin:24px auto;padding:0 12px;">
+<h1>Guide pas-à-pas — Configuration Claude</h1>
+<p>Session: ${escapeHtml(config.session_id || "")}</p>
+<p><strong>Conseil d'usage:</strong> utilisez Claude Pro pour les projets, agents et routines. Conservez ce guide et cochez chaque étape.</p>
+${stepsHtml}
+<hr />
+<h2>Checklist finale</h2>
+<ul>
+<li>Instructions personnalisées collées</li>
+<li>Projets créés</li>
+<li>Agents créés</li>
+<li>Routines planifiées</li>
+<li>Test de bout-en-bout effectué</li>
+</ul>
+</body></html>`;
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `guide-claude-${config.session_id || "session"}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ============================================
