@@ -74,7 +74,7 @@ function displayConfig(config) {
     <div class="config-header">
       <h2>Votre configuration Claude.ai est prête${config.client_name ? ", " + config.client_name : ""} !</h2>
       <p>Suivez les étapes ci-dessous pour tout importer dans Claude.ai</p>
-      <p class="config-trust-note">Session reprise possible en cas d'interruption. Les données diagnostics sont conservées au maximum 30 jours, puis supprimées automatiquement.</p>
+      <p class="config-trust-note">Session reprise possible en cas d'interruption. Les données diagnostics sont conservées au maximum 90 jours, puis supprimées automatiquement.</p>
     </div>
   `;
 
