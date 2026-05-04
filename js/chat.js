@@ -83,6 +83,7 @@ const typingIndicator = document.getElementById("typing-indicator");
 const chatInput = document.getElementById("chat-input");
 const sendBtn = document.getElementById("send-btn");
 const generateNowBtn = document.getElementById("generate-now-btn");
+const newSessionBtn = document.getElementById("new-session-btn");
 const modeSelector = document.getElementById("mode-selector");
 const modeExpressBtn = document.getElementById("mode-express-btn");
 const modeDeepBtn = document.getElementById("mode-deep-btn");
@@ -199,6 +200,33 @@ function showChat() {
   errorScreen.style.display = "none";
   chatScreen.style.display = "flex";
   chatInput.focus();
+}
+
+function resetChatVisualState() {
+  const messageNodes = messagesContainer.querySelectorAll(".message");
+  messageNodes.forEach((node) => node.remove());
+  document.querySelector(".chat-input-area").style.display = "";
+  typingIndicator.classList.remove("visible");
+  chatInput.disabled = false;
+  sendBtn.disabled = false;
+  if (generateNowBtn) generateNowBtn.disabled = false;
+  chatInput.placeholder = "Tapez ou dictez votre réponse...";
+}
+
+async function startNewSession() {
+  if (isStreaming) return;
+  const ok = window.confirm(
+    "Démarrer une nouvelle session ? Votre session actuelle restera en base mais l'écran repartira de zéro."
+  );
+  if (!ok) return;
+
+  sessionId = generateSessionId();
+  window.CS_SESSION_ID = sessionId;
+  conversationHistory = [];
+  configGenerationStarted = false;
+  resetChatVisualState();
+  diagnosticMode = await chooseDiagnosticMode();
+  await sendFirstMessage();
 }
 
 // ============================================
@@ -670,6 +698,12 @@ sendBtn.addEventListener("click", () => {
 });
 
 micBtn.addEventListener("click", toggleRecording);
+newSessionBtn?.addEventListener("click", () => {
+  startNewSession().catch((err) => {
+    console.error("New session error:", err);
+    appendMessage("assistant", "Erreur: impossible de démarrer une nouvelle session.");
+  });
+});
 generateNowBtn?.addEventListener("click", () => {
   if (isStreaming || configGenerationStarted) return;
   showDiagnosticComplete();

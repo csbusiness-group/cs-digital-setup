@@ -63,6 +63,22 @@ html, body {
   color: var(--text-muted);
 }
 
+.chat-new-session-btn {
+  margin-left: auto;
+  border: 1px solid var(--border-light);
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+
+.chat-new-session-btn:hover {
+  border-color: var(--terracotta);
+  color: var(--terracotta-light);
+}
+
 .mode-selector {
   margin: var(--space-md) var(--space-lg) 0;
   padding: var(--space-md);
