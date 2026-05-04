@@ -187,11 +187,7 @@ function appendMessage(role, content) {
   const div = document.createElement("div");
   div.className = `message message-${role}`;
 
-  // Nettoyer les blocs META et le marqueur DIAGNOSTIC_COMPLETE
-  let cleanContent = content
-    .replace(/\[META\][\s\S]*?\[\/META\]/g, "")
-    .replace(/\[DIAGNOSTIC_COMPLETE\]/g, "")
-    .trim();
+  let cleanContent = sanitizeAssistantVisibleText(content);
 
   // Convertir le markdown basique en HTML
   div.innerHTML = markdownToHtml(cleanContent);
@@ -243,6 +239,34 @@ function appendStreamDeltaFromEvent(data, acc) {
   }
 
   return acc;
+}
+
+// ============================================
+// Retirer fuites JSON (métadonnées diagnostic) du texte assistant
+// ============================================
+function stripLeakedDiagnosticFencedJson(text) {
+  if (!text || typeof text !== "string") return text;
+  return text
+    .replace(/```(?:json)?\s*\n?([\s\S]*?)```/gi, (match, inner) => {
+      const t = String(inner).trim();
+      if (
+        t.includes('"session_id"') &&
+        (t.includes('"coverage_tracking"') || t.includes('"metadata_version"'))
+      ) {
+        return "";
+      }
+      return match;
+    })
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/** Texte assistant affichable / à stocker en historique (sans META ni JSON interne). */
+function sanitizeAssistantVisibleText(text) {
+  return stripLeakedDiagnosticFencedJson(String(text || ""))
+    .replace(/\[META\][\s\S]*?\[\/META\]/g, "")
+    .replace(/\[DIAGNOSTIC_COMPLETE\]/g, "")
+    .trim();
 }
 
 // ============================================
@@ -325,10 +349,7 @@ async function sendFirstMessage() {
           const nextText = appendStreamDeltaFromEvent(data, fullText);
           if (nextText !== fullText) {
             fullText = nextText;
-            const cleanText = fullText
-              .replace(/\[META\][\s\S]*?\[\/META\]/g, "")
-              .replace(/\[DIAGNOSTIC_COMPLETE\]/g, "")
-              .trim();
+            const cleanText = sanitizeAssistantVisibleText(fullText);
             bubble.innerHTML = markdownToHtml(cleanText);
             scrollToBottom();
           }
@@ -336,10 +357,7 @@ async function sendFirstMessage() {
       }
     }
 
-    const cleanFinal = fullText
-      .replace(/\[META\][\s\S]*?\[\/META\]/g, "")
-      .replace(/\[DIAGNOSTIC_COMPLETE\]/g, "")
-      .trim();
+    const cleanFinal = sanitizeAssistantVisibleText(fullText);
     bubble.innerHTML = markdownToHtml(cleanFinal);
     bubble.removeAttribute("id");
 
@@ -448,10 +466,7 @@ async function sendMessage(text) {
           const nextText = appendStreamDeltaFromEvent(data, fullText);
           if (nextText !== fullText) {
             fullText = nextText;
-            const cleanText = fullText
-              .replace(/\[META\][\s\S]*?\[\/META\]/g, "")
-              .replace(/\[DIAGNOSTIC_COMPLETE\]/g, "")
-              .trim();
+            const cleanText = sanitizeAssistantVisibleText(fullText);
             bubble.innerHTML = markdownToHtml(cleanText);
             scrollToBottom();
           } 
@@ -462,10 +477,7 @@ async function sendMessage(text) {
     }
 
     // Finaliser la bulle
-    const cleanFinal = fullText
-      .replace(/\[META\][\s\S]*?\[\/META\]/g, "")
-      .replace(/\[DIAGNOSTIC_COMPLETE\]/g, "")
-      .trim();
+    const cleanFinal = sanitizeAssistantVisibleText(fullText);
     bubble.innerHTML = markdownToHtml(cleanFinal);
     bubble.removeAttribute("id");
 

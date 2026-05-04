@@ -38,9 +38,12 @@
     <main class="chat-messages" id="messages-container">
       <!-- Les messages sont injectes par JS -->
       <div class="typing-indicator" id="typing-indicator">
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
-        <div class="typing-dot"></div>
+        <span class="typing-hint">Pr&eacute;paration du diagnostic&hellip;</span>
+        <div class="typing-dots" aria-hidden="true">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
       </div>
     </main>
 
