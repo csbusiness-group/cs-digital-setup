@@ -56,6 +56,45 @@ function extractGuideSectionsFromConfig(config) {
   return sections.filter((s) => (s.content || "").trim().length > 0);
 }
 
+function extractGuideSectionsFromMarkdown(markdownBundle) {
+  const md = String(markdownBundle || "");
+  if (!md.trim()) return [];
+  const sections = [];
+
+  const customMatch = md.match(
+    /## Custom Instructions \(proposition\)\n+([\s\S]*?)(?:\n## |\n---|\n### |\n$)/i
+  );
+  if (customMatch?.[1]?.trim()) {
+    sections.push({
+      title: "Instructions personnalisées",
+      instruction:
+        "Allez dans Claude.ai → Paramètres → Instructions personnalisées, puis collez ce bloc.",
+      content: customMatch[1].trim(),
+    });
+  }
+
+  const parts = md.split("\n### ").slice(1);
+  for (const part of parts) {
+    const firstNl = part.indexOf("\n");
+    const title = (firstNl >= 0 ? part.slice(0, firstNl) : part).trim();
+    const body = (firstNl >= 0 ? part.slice(firstNl + 1) : "").trim();
+    if (!title || !body) continue;
+
+    const fenced =
+      body.match(/```text\n([\s\S]*?)```/i)?.[1]?.trim() ||
+      body.match(/```\n([\s\S]*?)```/i)?.[1]?.trim() ||
+      body;
+
+    sections.push({
+      title,
+      instruction: "Copiez ce contenu dans l'étape correspondante de votre configuration.",
+      content: fenced.trim(),
+    });
+  }
+
+  return sections.filter((s) => (s.content || "").trim().length > 0);
+}
+
 // ============================================
 // Génération de la config (STREAMING)
 // ============================================
@@ -378,6 +417,9 @@ function downloadGuideHtml(config) {
   });
   if (!sections.length) {
     sections = extractGuideSectionsFromConfig(config);
+  }
+  if (!sections.length) {
+    sections = extractGuideSectionsFromMarkdown(config?.markdown_bundle || "");
   }
 
   const tocHtml = sections
