@@ -58,6 +58,7 @@ let conversationHistory = [];
 let diagnosticMode = "express";
 let configGenerationStarted = false;
 let recoveryEmail = null;
+let promptLanguage = "fr";
 
 // ============================================
 // Generate unique session ID for this diagnostic
@@ -89,6 +90,7 @@ const modeSelector = document.getElementById("mode-selector");
 const modeExpressBtn = document.getElementById("mode-express-btn");
 const modeDeepBtn = document.getElementById("mode-deep-btn");
 const recoveryEmailInput = document.getElementById("recovery-email");
+const promptLanguageSelect = document.getElementById("prompt-language");
 
 // ============================================
 // Initialisation
@@ -169,9 +171,11 @@ function chooseDiagnosticMode() {
     const done = (mode) => {
       diagnosticMode = mode;
       recoveryEmail = (recoveryEmailInput?.value || userEmail || "").trim().toLowerCase();
+      promptLanguage = (promptLanguageSelect?.value || "fr").toLowerCase() === "en" ? "en" : "fr";
       if (recoveryEmail) {
         localStorage.setItem("recovery_email", recoveryEmail);
       }
+      localStorage.setItem("prompt_language", promptLanguage);
       if (modeSelector) modeSelector.style.display = "none";
       resolve(mode);
     };
@@ -179,6 +183,9 @@ function chooseDiagnosticMode() {
     if (recoveryEmailInput) {
       recoveryEmailInput.value =
         localStorage.getItem("recovery_email") || userEmail || "";
+    }
+    if (promptLanguageSelect) {
+      promptLanguageSelect.value = localStorage.getItem("prompt_language") || "fr";
     }
     if (modeSelector) modeSelector.style.display = "block";
     modeExpressBtn?.addEventListener("click", () => done("express"), { once: true });
@@ -374,8 +381,8 @@ async function sendFirstMessage() {
         session_id: sessionId,
         message:
           diagnosticMode === "deep"
-            ? `[DIAGNOSTIC_MODE:DEEP][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
-            : `[DIAGNOSTIC_MODE:EXPRESS][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
+            ? `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
+            : `[DIAGNOSTIC_MODE:EXPRESS][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
         conversation_history: conversationHistory,
         client_name: userEmail,
       }),
@@ -431,8 +438,8 @@ async function sendFirstMessage() {
       role: "user",
       content:
         diagnosticMode === "deep"
-          ? `[DIAGNOSTIC_MODE:DEEP][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
-          : `[DIAGNOSTIC_MODE:EXPRESS][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
+          ? `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
+          : `[DIAGNOSTIC_MODE:EXPRESS][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
     });
     conversationHistory.push({ role: "assistant", content: cleanFinal });
   } catch (err) {
