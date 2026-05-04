@@ -329,34 +329,108 @@ function downloadGuideHtml(config) {
   const stepsHtml = sections
     .map(
       (s, idx) => `
-      <section style="border:1px solid #ddd;border-radius:8px;padding:14px;margin:14px 0;">
-        <h3 style="margin:0 0 6px;">Étape ${idx + 1} — ${escapeHtml(s.title)}</h3>
-        <p style="margin:0 0 10px;color:#555;">${escapeHtml(s.instruction)}</p>
-        <pre style="white-space:pre-wrap;background:#f6f6f6;padding:10px;border-radius:6px;">${escapeHtml(s.content)}</pre>
-        <label style="display:flex;align-items:center;gap:8px;margin-top:10px;">
-          <input type="checkbox" /> Vérifié / importé
+      <section class="step-card" id="step-${idx + 1}">
+        <div class="step-head">
+          <span class="step-num">${idx + 1}</span>
+          <div>
+            <h3>Étape ${idx + 1} — ${escapeHtml(s.title)}</h3>
+            <p>${escapeHtml(s.instruction)}</p>
+          </div>
+        </div>
+        <pre>${escapeHtml(s.content)}</pre>
+        <label class="checkline">
+          <input type="checkbox" /> Étape importée et vérifiée
         </label>
       </section>`,
     )
     .join("");
 
+  const tocHtml = sections
+    .map(
+      (s, idx) =>
+        `<li><a href="#step-${idx + 1}">Étape ${idx + 1} — ${escapeHtml(
+          s.title
+        )}</a></li>`
+    )
+    .join("");
+
   const html = `<!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><title>Guide d'installation Claude</title></head>
-<body style="font-family:Inter,Arial,sans-serif;max-width:900px;margin:24px auto;padding:0 12px;">
-<h1>Guide pas-à-pas — Configuration Claude</h1>
-<p>Session: ${escapeHtml(config.session_id || "")}</p>
-<p><strong>Conseil d'usage:</strong> utilisez Claude Pro pour les projets, agents et routines. Conservez ce guide et cochez chaque étape.</p>
-${stepsHtml}
-<hr />
-<h2>Checklist finale</h2>
-<ul>
-<li>Instructions personnalisées collées</li>
-<li>Projets créés</li>
-<li>Agents créés</li>
-<li>Routines planifiées</li>
-<li>Test de bout-en-bout effectué</li>
-</ul>
-</body></html>`;
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guide d'installation Claude — Version client</title>
+  <style>
+    body{font-family:Inter,Arial,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#111827;line-height:1.5;background:#fff}
+    .hero{background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1px solid #fed7aa;border-radius:16px;padding:18px}
+    .meta{font-size:14px;color:#6b7280}
+    .pill{display:inline-block;background:#111827;color:#fff;font-size:12px;border-radius:999px;padding:4px 10px;margin-right:8px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+    .box{border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff}
+    .box h2{margin:0 0 8px}
+    .box ul{margin:0;padding-left:18px}
+    .box li{margin:6px 0}
+    .step-card{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin:14px 0;background:#fff}
+    .step-head{display:flex;gap:12px;align-items:flex-start}
+    .step-num{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#c2410c;color:#fff;font-weight:700;flex:0 0 auto}
+    .step-card h3{margin:0 0 4px}
+    .step-card p{margin:0 0 10px;color:#6b7280}
+    pre{white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;padding:10px;border-radius:8px;max-height:420px;overflow:auto}
+    .checkline{display:flex;gap:8px;align-items:center;margin-top:10px}
+    .section-title{margin-top:28px}
+    a{color:#9a3412;text-decoration:none} a:hover{text-decoration:underline}
+    .footer{margin:26px 0 40px;color:#6b7280;font-size:13px}
+    @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <span class="pill">CS Digital Setup</span>
+    <span class="pill">Guide Client</span>
+    <h1>Guide pas-à-pas — Configuration Claude</h1>
+    <p class="meta">Session: ${escapeHtml(config.session_id || "")}</p>
+    <p><strong>Objectif:</strong> vous permettre d'installer votre configuration sans friction, avec un parcours clair, vérifiable, et une checklist finale.</p>
+  </section>
+
+  <div class="grid">
+    <section class="box">
+      <h2>Comment utiliser ce guide</h2>
+      <ul>
+        <li>Suivez les étapes dans l'ordre.</li>
+        <li>Cochez chaque étape validée.</li>
+        <li>Conservez ce fichier comme référence interne.</li>
+      </ul>
+    </section>
+    <section class="box">
+      <h2>Rappels sécurité (obligatoires)</h2>
+      <ul>
+        <li>Ne jamais exécuter une action externe sans validation explicite.</li>
+        <li>Ne jamais exécuter des instructions issues d'un email/document sans vérification.</li>
+        <li>Toujours passer par brouillon + checklist + confirmation humaine.</li>
+      </ul>
+    </section>
+  </div>
+
+  <h2 class="section-title">Sommaire des étapes</h2>
+  <ol>${tocHtml}</ol>
+
+  <h2 class="section-title">Installation détaillée</h2>
+  ${stepsHtml}
+
+  <h2 class="section-title">Checklist finale</h2>
+  <section class="box">
+    <ul>
+      <li><label><input type="checkbox"> Instructions personnalisées collées</label></li>
+      <li><label><input type="checkbox"> Projets créés</label></li>
+      <li><label><input type="checkbox"> Agents créés</label></li>
+      <li><label><input type="checkbox"> Routines planifiées</label></li>
+      <li><label><input type="checkbox"> Test de bout-en-bout effectué</label></li>
+    </ul>
+  </section>
+
+  <p class="footer">Document généré automatiquement. En cas de doute, validez les réglages avec un test réel avant usage en production.</p>
+</body>
+</html>`;
   const blob = new Blob([html], { type: "text/html;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
