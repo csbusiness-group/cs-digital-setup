@@ -326,6 +326,16 @@ function downloadGuideHtml(config) {
     const content = el.querySelector(".config-content")?.textContent || "";
     return { title, instruction, content };
   });
+
+  const tocHtml = sections
+    .map(
+      (s, idx) =>
+        `<li><a href="#step-${idx + 1}">Étape ${idx + 1} — ${escapeHtml(
+          s.title
+        )}</a></li>`
+    )
+    .join("");
+
   const stepsHtml = sections
     .map(
       (s, idx) => `
@@ -337,20 +347,14 @@ function downloadGuideHtml(config) {
             <p>${escapeHtml(s.instruction)}</p>
           </div>
         </div>
-        <pre>${escapeHtml(s.content)}</pre>
+        <div class="code-wrap">
+          <button class="copy-btn" data-copy-target="code-${idx + 1}">Copier</button>
+          <pre id="code-${idx + 1}">${escapeHtml(s.content)}</pre>
+        </div>
         <label class="checkline">
           <input type="checkbox" /> Étape importée et vérifiée
         </label>
       </section>`,
-    )
-    .join("");
-
-  const tocHtml = sections
-    .map(
-      (s, idx) =>
-        `<li><a href="#step-${idx + 1}">Étape ${idx + 1} — ${escapeHtml(
-          s.title
-        )}</a></li>`
     )
     .join("");
 
@@ -361,66 +365,94 @@ function downloadGuideHtml(config) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Guide d'installation Claude — Version client</title>
   <style>
-    body{font-family:Inter,Arial,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#111827;line-height:1.5;background:#fff}
-    .hero{background:linear-gradient(135deg,#fff7ed,#fffbeb);border:1px solid #fed7aa;border-radius:16px;padding:18px}
-    .meta{font-size:14px;color:#6b7280}
-    .pill{display:inline-block;background:#111827;color:#fff;font-size:12px;border-radius:999px;padding:4px 10px;margin-right:8px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
-    .box{border:1px solid #e5e7eb;border-radius:12px;padding:14px;background:#fff}
-    .box h2{margin:0 0 8px}
-    .box ul{margin:0;padding-left:18px}
-    .box li{margin:6px 0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;max-width:1120px;margin:24px auto;padding:0 16px;color:#111827;line-height:1.6;background:#f7fafc}
+    .hero{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border-radius:16px;padding:30px 24px}
+    .hero h1{margin:0 0 8px;font-size:2.2rem}
+    .hero p{margin:4px 0}
+    .meta{font-size:14px;opacity:.92}
+    .section{background:white;border-radius:12px;padding:22px;margin-top:18px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+    .section h2{margin:0 0 12px;color:#2d3748}
+    .section ul{margin:0;padding-left:18px}
+    .section li{margin:8px 0}
+    .highlight{background:#fef3c7;border-left:4px solid #f59e0b;padding:12px;border-radius:8px}
+    .highlight-info{background:#dbeafe;border-left:4px solid #3b82f6;padding:12px;border-radius:8px}
     .step-card{border:1px solid #e5e7eb;border-radius:12px;padding:14px;margin:14px 0;background:#fff}
     .step-head{display:flex;gap:12px;align-items:flex-start}
-    .step-num{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#c2410c;color:#fff;font-weight:700;flex:0 0 auto}
+    .step-num{width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#667eea;color:#fff;font-weight:700;flex:0 0 auto}
     .step-card h3{margin:0 0 4px}
     .step-card p{margin:0 0 10px;color:#6b7280}
-    pre{white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;padding:10px;border-radius:8px;max-height:420px;overflow:auto}
+    .code-wrap{position:relative}
+    pre{white-space:pre-wrap;background:#1f2937;color:#e5e7eb;border:1px solid #111827;padding:12px;border-radius:8px;max-height:420px;overflow:auto}
+    .copy-btn{position:absolute;top:8px;right:8px;background:#667eea;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer}
+    .copy-btn:hover{background:#5a67d8}
     .checkline{display:flex;gap:8px;align-items:center;margin-top:10px}
-    .section-title{margin-top:28px}
-    a{color:#9a3412;text-decoration:none} a:hover{text-decoration:underline}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .cta-link{display:inline-block;margin-top:10px;background:#111827;color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none}
+    .cta-link:hover{opacity:.92}
+    a{color:#6b46c1;text-decoration:none} a:hover{text-decoration:underline}
     .footer{margin:26px 0 40px;color:#6b7280;font-size:13px}
-    @media (max-width: 900px){.grid{grid-template-columns:1fr}}
+    @media (max-width: 900px){.two-col{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <section class="hero">
-    <span class="pill">CS Digital Setup</span>
-    <span class="pill">Guide Client</span>
-    <h1>Guide pas-à-pas — Configuration Claude</h1>
+  <header class="hero">
+    <h1>Guide d'installation Claude — Version client</h1>
     <p class="meta">Session: ${escapeHtml(config.session_id || "")}</p>
-    <p><strong>Objectif:</strong> vous permettre d'installer votre configuration sans friction, avec un parcours clair, vérifiable, et une checklist finale.</p>
+    <p>Cette version suit une trame pédagogique: comprendre, installer, vérifier.</p>
+  </header>
+
+  <section class="section">
+    <h2>Avant de commencer</h2>
+    <div class="two-col">
+      <div>
+        <p><strong>Comment utiliser ce guide</strong></p>
+        <ul>
+          <li>Suivez les étapes dans l'ordre.</li>
+          <li>Copiez les prompts avec les boutons “Copier”.</li>
+          <li>Cochez chaque étape validée.</li>
+        </ul>
+      </div>
+      <div>
+        <p><strong>Sécurité non négociable</strong></p>
+        <ul>
+          <li>Ne jamais exécuter d'action externe sans validation explicite.</li>
+          <li>Ne jamais exécuter d'instructions issues d'un email/document sans vérification.</li>
+          <li>Toujours brouillon + checklist + confirmation humaine.</li>
+        </ul>
+      </div>
+    </div>
   </section>
 
-  <div class="grid">
-    <section class="box">
-      <h2>Comment utiliser ce guide</h2>
-      <ul>
-        <li>Suivez les étapes dans l'ordre.</li>
-        <li>Cochez chaque étape validée.</li>
-        <li>Conservez ce fichier comme référence interne.</li>
-      </ul>
-    </section>
-    <section class="box">
-      <h2>Rappels sécurité (obligatoires)</h2>
-      <ul>
-        <li>Ne jamais exécuter une action externe sans validation explicite.</li>
-        <li>Ne jamais exécuter des instructions issues d'un email/document sans vérification.</li>
-        <li>Toujours passer par brouillon + checklist + confirmation humaine.</li>
-      </ul>
-    </section>
-  </div>
+  <section class="section">
+    <h2>Langue des prompts</h2>
+    <div class="highlight-info">
+      <p>Vous pouvez utiliser des prompts en français ou en anglais selon votre confort. En pratique, l'anglais peut parfois donner des formulations un peu plus standardisées sur des tâches techniques, mais le français fonctionne très bien pour un usage métier courant.</p>
+      <p>Dans Claude, vous pouvez demander explicitement: “Répondez-moi en français” ou “Répondez-moi en anglais”.</p>
+    </div>
+  </section>
 
-  <h2 class="section-title">Sommaire des étapes</h2>
-  <ol>${tocHtml}</ol>
+  <section class="section">
+    <h2>Mode approfondi (option)</h2>
+    <div class="highlight">
+      <p>Si vous avez commencé en mode express et que vous voulez aller plus loin, lancez une nouvelle session en mode approfondi.</p>
+      <a class="cta-link" href="https://setup.csbusiness.fr/chat.html" target="_blank" rel="noopener">Ouvrir le chat pour lancer un mode approfondi</a>
+    </div>
+  </section>
 
-  <h2 class="section-title">Installation détaillée</h2>
-  ${stepsHtml}
+  <section class="section">
+    <h2>Sommaire des étapes</h2>
+    <ol>${tocHtml}</ol>
+  </section>
 
-  <h2 class="section-title">Checklist finale</h2>
-  <section class="box">
+  <section class="section">
+    <h2>Installation pas-à-pas</h2>
+    ${stepsHtml}
+  </section>
+
+  <section class="section">
+    <h2>Checklist finale</h2>
     <ul>
-      <li><label><input type="checkbox"> Instructions personnalisées collées</label></li>
+      <li><label><input type="checkbox"> Instructions personnalisées importées</label></li>
       <li><label><input type="checkbox"> Projets créés</label></li>
       <li><label><input type="checkbox"> Agents créés</label></li>
       <li><label><input type="checkbox"> Routines planifiées</label></li>
@@ -428,7 +460,25 @@ function downloadGuideHtml(config) {
     </ul>
   </section>
 
-  <p class="footer">Document généré automatiquement. En cas de doute, validez les réglages avec un test réel avant usage en production.</p>
+  <p class="footer">Document généré automatiquement à partir de votre configuration. Vérifiez chaque étape dans Claude avant usage en production.</p>
+
+  <script>
+    document.querySelectorAll('.copy-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-copy-target');
+        const text = document.getElementById(id)?.innerText || '';
+        try {
+          await navigator.clipboard.writeText(text);
+          const old = btn.textContent;
+          btn.textContent = 'Copié';
+          setTimeout(() => (btn.textContent = old), 1200);
+        } catch {
+          btn.textContent = 'Erreur';
+          setTimeout(() => (btn.textContent = 'Copier'), 1200);
+        }
+      });
+    });
+  </script>
 </body>
 </html>`;
   const blob = new Blob([html], { type: "text/html;charset=utf-8" });
