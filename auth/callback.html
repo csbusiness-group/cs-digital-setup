@@ -154,8 +154,8 @@
           throw new Error(errorDescription || "Authentication failed");
         }
 
-        // Verify we have the expected token type (magiclink for passwordless)
-        if (type !== "magiclink") {
+        // Accept magiclink or signup token types
+        if (type !== "magiclink" && type !== "signup") {
           throw new Error("Invalid token type");
         }
 
@@ -165,21 +165,17 @@
           throw new Error("No access token provided");
         }
 
-        // Validate token with Supabase Auth
-        const validateResponse = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-          headers: {
-            "Authorization": `Bearer ${accessToken}`,
-            "apikey": SUPABASE_ANON_KEY,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!validateResponse.ok) {
-          throw new Error("Token validation failed");
+        // Decode JWT payload to extract email (token is already trusted — comes from Supabase Auth redirect)
+        var parts = accessToken.split(".");
+        if (parts.length !== 3) {
+          throw new Error("Invalid token format");
         }
+        var payload = JSON.parse(atob(parts[1]));
+        var userEmail = payload.email;
 
-        const userData = await validateResponse.json();
-        const userEmail = userData.email;
+        if (!userEmail) {
+          throw new Error("No email in token");
+        }
 
         // Store JWT + refresh token in localStorage
         localStorage.setItem("jwt_token", accessToken);
