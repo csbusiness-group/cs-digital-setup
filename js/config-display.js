@@ -133,6 +133,9 @@ async function generateConfig(sessionId, jwtToken) {
 
     document.getElementById("generation-indicator")?.remove();
     displayConfig(fullConfig);
+
+    // Config delivered — revoke refresh token to prevent re-use
+    localStorage.removeItem("refresh_token");
   } catch (err) {
     console.error("Generation error:", err);
     const indicator = document.getElementById("generation-indicator");
