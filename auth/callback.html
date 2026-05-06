@@ -169,6 +169,7 @@
         const validateResponse = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
           headers: {
             "Authorization": `Bearer ${accessToken}`,
+            "apikey": SUPABASE_ANON_KEY,
             "Content-Type": "application/json",
           },
         });
