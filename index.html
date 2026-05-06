@@ -1152,6 +1152,11 @@
   </footer>
 
   <script>
+    // Auth redirect: si un magic link atterrit ici, rediriger vers callback
+    if (window.location.hash && (window.location.hash.includes('access_token=') || window.location.hash.includes('error='))) {
+      window.location.href = '/auth/callback.html' + window.location.hash;
+    }
+
     // Scroll reveal
     var obs = new IntersectionObserver(function(entries) {
       entries.forEach(function(e) {
