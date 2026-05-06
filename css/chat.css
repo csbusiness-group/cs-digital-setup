@@ -861,6 +861,41 @@ html, body {
   background: var(--success);
 }
 
+.feedback-stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: var(--space-md) 0 var(--space-xs);
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 150ms ease, transform 150ms ease;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.star-btn:hover,
+.star-btn.active {
+  color: var(--terracotta-light);
+}
+
+.star-btn:hover {
+  transform: scale(1.2);
+}
+
+.feedback-rating-label {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--terracotta-light);
+  min-height: 1.2em;
+  margin-bottom: var(--space-sm);
+}
+
 .feedback-status {
   text-align: center;
   font-size: var(--font-size-sm);

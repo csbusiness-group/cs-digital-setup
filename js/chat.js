@@ -55,7 +55,7 @@ let sessionId = null;
 let sessionData = null;
 let isStreaming = false;
 let conversationHistory = [];
-let diagnosticMode = "express";
+let diagnosticMode = "deep";
 let configGenerationStarted = false;
 let recoveryEmail = null;
 let promptLanguage = "fr";
@@ -88,8 +88,7 @@ const sendBtn = document.getElementById("send-btn");
 const generateNowBtn = document.getElementById("generate-now-btn");
 const newSessionBtn = document.getElementById("new-session-btn");
 const modeSelector = document.getElementById("mode-selector");
-const modeExpressBtn = document.getElementById("mode-express-btn");
-const modeDeepBtn = document.getElementById("mode-deep-btn");
+const modeStartBtn = document.getElementById("mode-start-btn");
 const recoveryEmailInput = document.getElementById("recovery-email");
 const promptLanguageSelect = document.getElementById("prompt-language");
 
@@ -97,51 +96,9 @@ const promptLanguageSelect = document.getElementById("prompt-language");
 // Initialisation
 // ============================================
 async function init() {
-  // Check for beta test mode
-  const urlParams = new URLSearchParams(window.location.search);
-  const isTest = urlParams.get("test") === "true";
-  const testEmail = urlParams.get("email");
-  const betaToken = urlParams.get("token");
-
-  if (betaToken) {
-    // Beta invite mode: exchange session token for a real Supabase JWT.
-    try {
-      const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/exchange-beta-token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: betaToken }),
-      });
-      if (!res.ok) {
-        throw new Error("Lien beta invalide ou expire.");
-      }
-      const data = await res.json();
-      jwtToken = data.access_token || null;
-      userEmail = data.user_email || null;
-      if (jwtToken && userEmail) {
-        localStorage.setItem("jwt_token", jwtToken);
-        localStorage.setItem("user_email", userEmail);
-        // Remove token from URL for cleaner UX and to avoid accidental sharing.
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    } catch (err) {
-      console.error("Beta token exchange error:", err);
-      showError();
-      return;
-    }
-  } else if (isTest && testEmail) {
-    // Beta test mode: create a temporary session
-    jwtToken = "beta_test_token_" + Date.now();
-    userEmail = testEmail;
-    localStorage.setItem("jwt_token", jwtToken);
-    localStorage.setItem("user_email", userEmail);
-    localStorage.setItem("is_beta_test", "true");
-  } else {
-    // Extract JWT from localStorage (set by auth/callback.html)
-    jwtToken = localStorage.getItem("jwt_token");
-    userEmail = localStorage.getItem("user_email");
-  }
+  // Extract JWT from localStorage (set by auth/callback.html after Stripe → magic link flow)
+  jwtToken = localStorage.getItem("jwt_token");
+  userEmail = localStorage.getItem("user_email");
 
   if (!jwtToken || !userEmail) {
     console.log("No JWT found, redirecting to home");
@@ -175,8 +132,8 @@ async function init() {
 
 function chooseDiagnosticMode() {
   return new Promise((resolve) => {
-    const done = (mode) => {
-      diagnosticMode = mode;
+    const done = () => {
+      diagnosticMode = "deep";
       recoveryEmail = (recoveryEmailInput?.value || userEmail || "").trim().toLowerCase();
       promptLanguage = (promptLanguageSelect?.value || "fr").toLowerCase() === "en" ? "en" : "fr";
       if (recoveryEmail) {
@@ -184,7 +141,7 @@ function chooseDiagnosticMode() {
       }
       localStorage.setItem("prompt_language", promptLanguage);
       if (modeSelector) modeSelector.style.display = "none";
-      resolve(mode);
+      resolve("deep");
     };
 
     if (recoveryEmailInput) {
@@ -195,8 +152,7 @@ function chooseDiagnosticMode() {
       promptLanguageSelect.value = localStorage.getItem("prompt_language") || "fr";
     }
     if (modeSelector) modeSelector.style.display = "block";
-    modeExpressBtn?.addEventListener("click", () => done("express"), { once: true });
-    modeDeepBtn?.addEventListener("click", () => done("deep"), { once: true });
+    modeStartBtn?.addEventListener("click", () => done(), { once: true });
   });
 }
 
@@ -389,10 +345,7 @@ async function sendFirstMessage() {
       },
       body: JSON.stringify({
         session_id: sessionId,
-        message:
-          diagnosticMode === "deep"
-            ? `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
-            : `[DIAGNOSTIC_MODE:EXPRESS][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
+        message: `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je suis prêt(e) pour mon diagnostic.`,
         conversation_history: conversationHistory,
         client_name: userEmail,
       }),
