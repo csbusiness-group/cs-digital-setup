@@ -3,28 +3,811 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0f0f0f">
-  <title>CS Digital Setup — Votre Claude, configur&eacute; pour vous</title>
-  <meta name="description" content="Pour 149 €, un diagnostic conversationnel génère votre configuration Claude.ai sur mesure — instructions, projets, agents — adaptée à votre métier. Rentabilisé dès le 1er jour.">
-  <!-- Open Graph -->
-  <meta property="og:title" content="CS Digital Setup — Configurez votre Claude.ai sur mesure">
-  <meta property="og:description" content="Pour 149 €, un diagnostic conversationnel génère votre configuration Claude.ai personnalisée — instructions, projets, agents et routines adaptés à votre métier.">
+  <meta name="theme-color" content="#FBF7F2">
+  <title>CS Digital Setup — Gagnez 30 min par jour avec une IA qui vous connaît</title>
+  <meta name="description" content="Un diagnostic de 45 min génère votre configuration IA sur mesure. Fini les réponses génériques — votre assistant comprend votre métier dès la première phrase. 149 €, rentabilisé dès le 1er jour.">
+  <meta property="og:title" content="CS Digital Setup — Gagnez 30 min par jour avec une IA qui vous connaît">
+  <meta property="og:description" content="Un diagnostic de 45 min génère votre configuration IA sur mesure. Fini les réponses génériques. 149 €, rentabilisé dès le 1er jour.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://setup.csbusiness.fr">
   <meta property="og:image" content="https://setup.csbusiness.fr/og-image.png">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:site_name" content="CS Consulting Stratégique">
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="CS Digital Setup — Configurez votre Claude.ai sur mesure">
-  <meta name="twitter:description" content="Pour 149 €, un diagnostic conversationnel génère votre configuration Claude.ai personnalisée — instructions, projets, agents et routines adaptés à votre métier.">
+  <meta name="twitter:title" content="CS Digital Setup — Gagnez 30 min par jour avec une IA qui vous connaît">
+  <meta name="twitter:description" content="Un diagnostic de 45 min génère votre configuration IA sur mesure. 149 €, rentabilisé dès le 1er jour.">
   <meta name="twitter:image" content="https://setup.csbusiness.fr/og-image.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/landing.css">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <script defer src="https://cloud.umami.is/script.js" data-website-id="2b859da1-a437-4bf0-9620-3a427b439292"></script>
+  <style>
+    :root {
+      /* ---- Palette solaire / Catherine ---- */
+      --cream:        #FBF7F2;
+      --cream-deep:   #F3EDE4;
+      --sand:         #EDE5D8;
+      --terracotta:   #C2714A;
+      --terracotta-h: #D4835C;
+      --terracotta-bg:#FFF0E8;
+      --coral:        #E8926B;
+      --sage:         #7A9E87;
+      --sage-light:   #E8F0EB;
+      --ochre:        #D4A24E;
+      --ochre-light:  #FFF6E5;
+      --ink:          #2C2420;
+      --ink-soft:     #4A3F38;
+      --text-body:    #5C524A;
+      --text-light:   #8A7F76;
+      --text-faint:   #B0A69C;
+      --border:       rgba(44, 36, 32, 0.08);
+      --border-med:   rgba(44, 36, 32, 0.12);
+      --white:        #FFFFFF;
+      --radius-md:    10px;
+      --radius-lg:    14px;
+      --radius-xl:    22px;
+      --radius-full:  999px;
+      --shadow-sm:    0 1px 3px rgba(44,36,32,0.04), 0 4px 12px rgba(44,36,32,0.03);
+      --shadow-md:    0 2px 8px rgba(44,36,32,0.05), 0 12px 36px rgba(44,36,32,0.06);
+      --shadow-lg:    0 4px 12px rgba(44,36,32,0.06), 0 24px 60px rgba(44,36,32,0.08);
+      --font-body:    'Source Sans 3', -apple-system, sans-serif;
+      --font-display: 'Instrument Serif', Georgia, serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ---- Animations ---- */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(251, 247, 242, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 0;
+    }
+    .nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .nav-logo {
+      width: 38px; height: 38px;
+      background: var(--terracotta);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: white;
+      letter-spacing: 0.5px;
+    }
+    .nav-name {
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+      color: var(--ink-soft);
+    }
+    .nav-cta {
+      background: var(--terracotta);
+      color: white;
+      text-decoration: none;
+      padding: 9px 22px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(194, 113, 74, 0.2);
+    }
+    .nav-cta:hover {
+      background: var(--terracotta-h);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(194, 113, 74, 0.3);
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      padding: 140px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Organic blob behind hero */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px;
+      right: -180px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(232, 146, 107, 0.12) 0%, rgba(232, 146, 107, 0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 8s ease-in-out infinite;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      left: -160px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(122, 158, 135, 0.1) 0%, rgba(122, 158, 135, 0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float 10s ease-in-out infinite 2s;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--terracotta-bg);
+      color: var(--terracotta);
+      padding: 7px 18px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 28px;
+      animation: fadeUp 0.7s ease both;
+    }
+    .hero-eyebrow .dot {
+      width: 7px; height: 7px;
+      background: var(--coral);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      animation: fadeUp 0.7s ease both 0.1s;
+      position: relative;
+    }
+    .hero h1 em {
+      color: var(--terracotta);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      color: var(--text-body);
+      max-width: 540px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+      animation: fadeUp 0.7s ease both 0.2s;
+      position: relative;
+    }
+
+    .hero-ctas {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      animation: fadeUp 0.7s ease both 0.3s;
+      position: relative;
+    }
+    .btn-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--terracotta);
+      color: white;
+      text-decoration: none;
+      padding: 16px 36px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 17px;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      box-shadow: 0 4px 16px rgba(194, 113, 74, 0.25), 0 1px 3px rgba(194, 113, 74, 0.15);
+    }
+    .btn-main:hover {
+      background: var(--terracotta-h);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(194, 113, 74, 0.3), 0 2px 6px rgba(194, 113, 74, 0.2);
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      color: var(--text-body);
+      text-decoration: none;
+      padding: 10px 24px;
+      font-size: 15px;
+      font-weight: 500;
+      transition: color 0.25s;
+    }
+    .btn-ghost:hover { color: var(--terracotta); }
+
+    .hero-proof {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 36px;
+      animation: fadeUp 0.7s ease both 0.4s;
+      position: relative;
+    }
+    .hero-proof-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-light);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* ---- Section shared ---- */
+    section { padding: 80px 0; }
+
+    .section-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--terracotta);
+      margin-bottom: 10px;
+    }
+    .section-head {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+    .section-head h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 4vw, 2.3rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .section-head h2 em {
+      color: var(--terracotta);
+      font-style: italic;
+    }
+    .section-head p {
+      color: var(--text-body);
+      max-width: 500px;
+      margin: 0 auto;
+      font-size: 15px;
+    }
+
+    /* ---- Cost / Problem ---- */
+    .cost-section {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      margin: 0 16px;
+      padding: 72px 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .cost-calc {
+      max-width: 520px;
+      margin: 0 auto 44px;
+      background: var(--ochre-light);
+      border: 1px solid rgba(212, 162, 78, 0.2);
+      border-radius: var(--radius-xl);
+      padding: 28px 32px;
+      text-align: center;
+    }
+    .cost-calc-label {
+      font-size: 14px;
+      color: var(--text-body);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .cost-calc-number {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 6vw, 3.8rem);
+      color: var(--terracotta);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .cost-calc-detail {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    .pain-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .pain-card {
+      padding: 22px 24px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .pain-card:hover {
+      border-color: var(--border-med);
+      box-shadow: var(--shadow-sm);
+    }
+    .pain-icon {
+      width: 42px; height: 42px;
+      background: var(--terracotta-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .pain-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--ink-soft);
+    }
+    .pain-card p {
+      color: var(--text-body);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    /* ---- How it works ---- */
+    .how-section {
+      position: relative;
+    }
+    .steps-wrap {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+    .step {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s;
+    }
+    .step:hover { box-shadow: var(--shadow-md); }
+    .step-num {
+      width: 48px; height: 48px;
+      background: var(--terracotta);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .step-body h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+    .step-body p {
+      color: var(--text-body);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .step-tag {
+      display: inline-block;
+      background: var(--sage-light);
+      color: var(--sage);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    /* ---- Results ---- */
+    .results-section {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      margin: 0 16px;
+      padding: 72px 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .result-card {
+      display: flex;
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .result-card:hover {
+      border-color: rgba(194, 113, 74, 0.2);
+      transform: translateY(-1px);
+    }
+    .result-icon {
+      width: 38px; height: 38px;
+      background: var(--terracotta-bg);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .result-text h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: var(--ink-soft);
+    }
+    .result-text p {
+      color: var(--text-body);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    /* ---- Credibility ---- */
+    .cred-section { position: relative; }
+    .cred-card {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      padding: 36px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+    }
+    .cred-avatar {
+      width: 68px; height: 68px;
+      background: linear-gradient(135deg, var(--terracotta), var(--coral));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 26px;
+      color: white;
+      flex-shrink: 0;
+    }
+    .cred-body h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: var(--ink);
+    }
+    .cred-role {
+      color: var(--terracotta);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .cred-body p {
+      color: var(--text-body);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .cred-body p + p { margin-top: 8px; }
+
+    /* ---- Testimonials ---- */
+    .testi-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .testi-card {
+      padding: 28px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s;
+    }
+    .testi-card:hover { box-shadow: var(--shadow-md); }
+    .testi-stars {
+      color: var(--ochre);
+      margin-bottom: 12px;
+      font-size: 16px;
+      letter-spacing: 2px;
+    }
+    .testi-card blockquote {
+      color: var(--ink-soft);
+      font-size: 15px;
+      margin-bottom: 16px;
+      font-style: italic;
+      line-height: 1.65;
+    }
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .testi-av {
+      width: 36px; height: 36px;
+      background: var(--terracotta);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: white;
+      font-size: 13px;
+    }
+    .testi-name { font-weight: 600; font-size: 14px; color: var(--ink-soft); }
+    .testi-role { color: var(--text-light); font-size: 12px; }
+
+    /* ---- Pricing ---- */
+    .pricing-section { position: relative; }
+    .pricing-anchor {
+      max-width: 540px;
+      margin: 0 auto 32px;
+      text-align: center;
+    }
+    .pricing-anchor p {
+      font-size: 15px;
+      color: var(--text-body);
+      line-height: 1.7;
+    }
+    .pricing-anchor strong { color: var(--ink); }
+
+    .pricing-box {
+      max-width: 500px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 2px solid var(--terracotta);
+      border-radius: var(--radius-xl);
+      padding: 48px 36px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 8px 40px rgba(194, 113, 74, 0.1), var(--shadow-md);
+    }
+    .pricing-box::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: var(--radius-xl);
+      background: radial-gradient(ellipse at top, rgba(194, 113, 74, 0.06), transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pricing-amount {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 4.5rem);
+      color: var(--terracotta);
+      line-height: 1;
+      margin-bottom: 6px;
+      position: relative;
+    }
+    .pricing-once {
+      color: var(--text-body);
+      font-size: 14px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .pricing-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 32px;
+      position: relative;
+    }
+    .pricing-features li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink-soft);
+      font-size: 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.5;
+    }
+    .pricing-features li svg { flex-shrink: 0; margin-top: 2px; }
+
+    .pricing-cta {
+      display: block;
+      width: 100%;
+      background: var(--terracotta);
+      color: white;
+      text-decoration: none;
+      padding: 16px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 17px;
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      position: relative;
+      box-shadow: 0 4px 16px rgba(194, 113, 74, 0.25);
+    }
+    .pricing-cta:hover {
+      background: var(--terracotta-h);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 28px rgba(194, 113, 74, 0.3);
+    }
+    .pricing-note {
+      color: var(--text-light);
+      font-size: 12px;
+      margin-top: 16px;
+      line-height: 1.65;
+      position: relative;
+    }
+
+    /* ---- FAQ ---- */
+    .faq-list {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .faq-item { border-bottom: 1px solid var(--border-med); }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      text-align: left;
+      padding: 20px 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      transition: color 0.25s;
+    }
+    .faq-question:hover { color: var(--terracotta); }
+    .faq-question::after {
+      content: "+";
+      font-size: 20px;
+      color: var(--terracotta);
+      flex-shrink: 0;
+      transition: transform 0.3s;
+      font-weight: 400;
+    }
+    .faq-item.open .faq-question::after { content: "\2212"; }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+      padding-bottom: 20px;
+    }
+    .faq-answer p {
+      color: var(--text-body);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* ---- Final CTA ---- */
+    .final-cta {
+      text-align: center;
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      margin: 0 16px;
+      padding: 64px 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+    .final-cta h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 4vw, 2.3rem);
+      margin-bottom: 12px;
+      color: var(--ink);
+    }
+    .final-cta h2 em {
+      color: var(--terracotta);
+      font-style: italic;
+    }
+    .final-cta > p, .final-cta .container > p {
+      color: var(--text-body);
+      margin-bottom: 28px;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      font-size: 15px;
+    }
+
+    /* ---- Footer ---- */
+    .footer {
+      padding: 36px 0;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 12px;
+    }
+    .footer a {
+      color: var(--terracotta);
+      text-decoration: none;
+    }
+    .footer a:hover { text-decoration: underline; }
+
+    /* ---- Responsive ---- */
+    @media (min-width: 640px) {
+      .pain-grid { grid-template-columns: 1fr 1fr; }
+      .results-grid { grid-template-columns: 1fr 1fr; }
+      .testi-grid { grid-template-columns: 1fr 1fr; }
+      .hero-ctas { flex-direction: row; justify-content: center; }
+      .cost-section, .results-section, .final-cta { margin: 0; border-radius: 0; }
+    }
+
+    @media (min-width: 900px) {
+      section { padding: 100px 0; }
+      .hero { padding: 160px 0 100px; }
+      .pain-grid { grid-template-columns: repeat(3, 1fr); }
+      .steps-wrap { grid-template-columns: repeat(3, 1fr); }
+      .step { flex-direction: column; text-align: center; align-items: center; }
+      .results-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 639px) {
+      .hero-proof { flex-direction: column; gap: 8px; }
+      .cred-card { flex-direction: column; align-items: center; text-align: center; padding: 28px 24px; }
+      .cost-section, .results-section, .final-cta { margin: 0 8px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -35,157 +818,209 @@
         <div class="nav-logo">CS</div>
         <div class="nav-name">Digital Setup</div>
       </a>
-      <a href="#pricing" class="nav-cta">Configurer mon Claude</a>
+      <a href="#pricing" class="nav-cta">Lancer mon diagnostic</a>
     </div>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <div class="hero-badge">Configurez votre Claude.ai — 149 &euro;</div>
-      <h1>Votre Claude, <span>taill&eacute; sur mesure</span><br>pour votre activit&eacute;</h1>
-      <p class="hero-subtitle">
-        Arr&ecirc;tez de perdre 30 minutes par jour &agrave; reformuler vos demandes.
-        Un diagnostic approfondi cr&eacute;e votre configuration Claude.ai sur mesure &mdash; rembours&eacute; d&egrave;s la premi&egrave;re journ&eacute;e d'utilisation.
-      </p>
-      <div class="hero-cta-group">
-        <a href="#pricing" class="btn-primary">Configurer mon Claude — 149 &euro;</a>
-        <a href="#how" class="btn-secondary">Comment &ccedil;a marche ?</a>
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        Diagnostic IA sur mesure &bull; 149 &euro; &bull; Rentabilis&eacute; d&egrave;s le 1er jour
       </div>
-      <p class="hero-reassurance">Livr&eacute; par email &bull; Copier-coller dans Claude.ai &bull; Rentabilis&eacute; d&egrave;s le 1er jour</p>
+      <h1>Votre IA perd du temps<br>parce qu'elle <em>ne vous conna&icirc;t pas</em></h1>
+      <p class="hero-sub">
+        Vous r&eacute;p&eacute;tez votre contexte &agrave; chaque conversation. Vous obtenez des r&eacute;ponses g&eacute;n&eacute;riques.
+        Un diagnostic de 45 minutes change&nbsp;tout&nbsp;: votre assistant IA comprend enfin votre m&eacute;tier, vos clients, vos priorit&eacute;s.
+      </p>
+      <div class="hero-ctas">
+        <a href="#" id="buy-btn" class="btn-main">
+          <span>Lancer mon diagnostic &mdash; 149 &euro;</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="#how" class="btn-ghost">Comment &ccedil;a marche &darr;</a>
+      </div>
+      <div class="hero-proof">
+        <span class="hero-proof-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Livr&eacute; par email
+        </span>
+        <span class="hero-proof-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Simple copier-coller
+        </span>
+        <span class="hero-proof-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Sans abonnement
+        </span>
+      </div>
     </div>
   </section>
 
-  <!-- Probl&egrave;me -->
-  <section class="problem">
+  <!-- Co&ucirc;t du probl&egrave;me -->
+  <section class="cost-section">
     <div class="container">
-      <div class="section-title">
-        <h2>Vous perdez du temps <span>chaque jour</span> avec un Claude mal configur&eacute;</h2>
-        <p>Et ce temps perdu, c'est de l'argent que vous laissez sur la table.</p>
+      <div class="section-head reveal">
+        <div class="section-label">Le vrai probl&egrave;me</div>
+        <h2>Chaque jour, vous perdez du temps<br>&agrave; cause d'une IA <em>mal param&eacute;tr&eacute;e</em></h2>
       </div>
-      <div class="problem-grid">
-        <div class="problem-card">
-          <div class="problem-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+
+      <div class="cost-calc reveal">
+        <p class="cost-calc-label">Ce que &ccedil;a vous co&ucirc;te chaque mois</p>
+        <div class="cost-calc-number">~1 000 &euro;</div>
+        <p class="cost-calc-detail">30 min perdues/jour &times; 50 &euro;/h &times; 20 jours ouvr&eacute;s</p>
+      </div>
+
+      <div class="pain-grid">
+        <div class="pain-card reveal">
+          <div class="pain-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
           </div>
-          <h3>30 min/jour perdues</h3>
-          <p>Vous r&eacute;expliquez votre contexte &agrave; chaque conversation. Votre m&eacute;tier, vos clients, vos contraintes&hellip; &agrave; chaque fois, de z&eacute;ro.</p>
+          <div>
+            <h3>&laquo; Je r&eacute;p&egrave;te tout &agrave; chaque fois &raquo;</h3>
+            <p>Votre m&eacute;tier, vos clients, vos contraintes&hellip; Vous r&eacute;expliquez tout de z&eacute;ro &agrave; chaque nouvelle conversation.</p>
+          </div>
         </div>
-        <div class="problem-card">
-          <div class="problem-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        <div class="pain-card reveal">
+          <div class="pain-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
           </div>
-          <h3>R&eacute;sultats d&eacute;cevants</h3>
-          <p>Les prompts copi&eacute;s du web ne collent pas &agrave; votre r&eacute;alit&eacute; de dirigeant(e). Vous obtenez des r&eacute;ponses g&eacute;n&eacute;riques qui ne servent &agrave; rien.</p>
+          <div>
+            <h3>&laquo; Les r&eacute;ponses sont &agrave; c&ocirc;t&eacute; de la plaque &raquo;</h3>
+            <p>G&eacute;n&eacute;riques, scolaires, d&eacute;connect&eacute;es de votre r&eacute;alit&eacute;. Vous finissez par tout r&eacute;&eacute;crire vous-m&ecirc;me.</p>
+          </div>
         </div>
-        <div class="problem-card">
-          <div class="problem-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <div class="pain-card reveal">
+          <div class="pain-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
-          <h3>Un outil &agrave; 20 &euro;/mois sous-exploit&eacute;</h3>
-          <p>Vous payez Claude Pro mais vous n'utilisez que 10% de son potentiel. C'est comme avoir une Ferrari et rouler en premi&egrave;re.</p>
+          <div>
+            <h3>&laquo; Je sais que je sous-utilise l'IA &raquo;</h3>
+            <p>Vous payez un outil puissant mais vous n'en tirez qu'une fraction. Pas le temps, trop de pistes, aucune structure.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Comment &ccedil;a marche -->
-  <section id="how">
+  <section id="how" class="how-section">
     <div class="container">
-      <div class="section-title">
-        <h2>Comment <span>&ccedil;a marche</span></h2>
-        <p>Un processus simple en 3 &eacute;tapes, guid&eacute; par un chatbot intelligent.</p>
+      <div class="section-head reveal">
+        <div class="section-label">Le processus</div>
+        <h2>45 minutes qui changent<br><em>votre fa&ccedil;on de travailler</em></h2>
+        <p>Un &eacute;change guid&eacute; par un chatbot intelligent, puis tout est g&eacute;n&eacute;r&eacute; pour vous.</p>
       </div>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-number">1</div>
-          <div class="step-content">
-            <h3>Diagnostic conversationnel</h3>
-            <p>Notre chatbot vous pose les bonnes questions sur votre activit&eacute;, vos outils, vos contraintes et votre fa&ccedil;on de travailler. Prenez votre temps, c'est l&agrave; que la magie op&egrave;re.</p>
-            <span class="step-duration">45 min &agrave; 1h</span>
+      <div class="steps-wrap">
+        <div class="step reveal">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Vous r&eacute;pondez, il &eacute;coute</h3>
+            <p>Un chatbot vous pose les bonnes questions sur votre activit&eacute;, vos clients, vos fa&ccedil;ons de travailler. Comme un bon consultant, il creuse l&agrave; o&ugrave; &ccedil;a compte.</p>
+            <span class="step-tag">45 min &agrave; 1h &bull; &agrave; votre rythme</span>
           </div>
         </div>
-        <div class="step-card">
-          <div class="step-number">2</div>
-          <div class="step-content">
-            <h3>G&eacute;n&eacute;ration sur mesure</h3>
-            <p>L'IA analyse vos r&eacute;ponses et g&eacute;n&egrave;re une configuration compl&egrave;te : instructions, projets, agents, routines.</p>
-            <span class="step-duration">~2 minutes</span>
+        <div class="step reveal">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>L'IA g&eacute;n&egrave;re votre configuration</h3>
+            <p>Vos r&eacute;ponses sont analys&eacute;es pour cr&eacute;er un param&eacute;trage complet, adapt&eacute; &agrave; votre m&eacute;tier, vos priorit&eacute;s et votre fa&ccedil;on de penser.</p>
+            <span class="step-tag">2 minutes</span>
           </div>
         </div>
-        <div class="step-card">
-          <div class="step-number">3</div>
-          <div class="step-content">
-            <h3>Copier-coller dans Claude</h3>
-            <p>Vous recevez tout par email avec un guide pas-&agrave;-pas. Il suffit de copier-coller chaque &eacute;l&eacute;ment dans votre Claude.ai.</p>
-            <span class="step-duration">15 &agrave; 20 min</span>
+        <div class="step reveal">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Vous copiez-collez, c'est pr&ecirc;t</h3>
+            <p>Tout arrive par email avec un guide pas-&agrave;-pas. Si vous savez copier-coller, vous savez installer votre configuration.</p>
+            <span class="step-tag">15 &agrave; 20 min</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Livrables -->
-  <section class="deliverables">
+  <!-- R&eacute;sultats -->
+  <section class="results-section">
     <div class="container">
-      <div class="section-title">
-        <h2>Ce que vous <span>recevez</span></h2>
-        <p>Une configuration compl&egrave;te, pr&ecirc;te &agrave; l'emploi.</p>
+      <div class="section-head reveal">
+        <div class="section-label">Ce que vous obtenez</div>
+        <h2>Une IA qui travaille <em>comme si</em><br>elle vous connaissait depuis des mois</h2>
       </div>
-      <div class="deliverables-grid">
-        <div class="deliverable-card">
-          <div class="deliverable-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <div class="results-grid">
+        <div class="result-card reveal">
+          <div class="result-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
-          <div class="deliverable-text">
-            <h3>Instructions personnalis&eacute;es</h3>
-            <p>Un profil global qui dit &agrave; Claude qui vous &ecirc;tes et comment vous aider.</p>
-          </div>
-        </div>
-        <div class="deliverable-card">
-          <div class="deliverable-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <div class="deliverable-text">
-            <h3>3 &agrave; 5 projets configur&eacute;s</h3>
-            <p>Des espaces d&eacute;di&eacute;s pour vos cas d'usage (emails, strat&eacute;gie, contenu, admin...).</p>
+          <div class="result-text">
+            <h3>Elle sait qui vous &ecirc;tes</h3>
+            <p>D&egrave;s la premi&egrave;re phrase, l'IA conna&icirc;t votre m&eacute;tier, votre ton, vos clients. Plus besoin de tout r&eacute;expliquer.</p>
           </div>
         </div>
-        <div class="deliverable-card">
-          <div class="deliverable-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <div class="result-card reveal">
+          <div class="result-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
           </div>
-          <div class="deliverable-text">
-            <h3>Agents sp&eacute;cialis&eacute;s</h3>
-            <p>Des assistants pr&eacute;configur&eacute;s pour votre m&eacute;tier avec les bons outils activ&eacute;s.</p>
-          </div>
-        </div>
-        <div class="deliverable-card">
-          <div class="deliverable-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          </div>
-          <div class="deliverable-text">
-            <h3>Agent Coach</h3>
-            <p>Un agent d'am&eacute;lioration continue qui vous aide &agrave; progresser avec Claude chaque semaine.</p>
+          <div class="result-text">
+            <h3>Des espaces d&eacute;di&eacute;s par sujet</h3>
+            <p>Emails, strat&eacute;gie, contenu, admin&hellip; Chaque espace est pr&eacute;-param&eacute;tr&eacute; pour un usage pr&eacute;cis.</p>
           </div>
         </div>
-        <div class="deliverable-card">
-          <div class="deliverable-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        <div class="result-card reveal">
+          <div class="result-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           </div>
-          <div class="deliverable-text">
-            <h3>Agent Miroir</h3>
-            <p>Un agent de r&eacute;flexion personnalis&eacute;, adapt&eacute; &agrave; votre profil et votre style de pens&eacute;e.</p>
+          <div class="result-text">
+            <h3>Des assistants pr&ecirc;ts &agrave; l'emploi</h3>
+            <p>Pour r&eacute;diger, analyser, planifier&hellip; Chacun est calibr&eacute; pour vos t&acirc;ches r&eacute;currentes.</p>
           </div>
         </div>
-        <div class="deliverable-card">
-          <div class="deliverable-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="result-card reveal">
+          <div class="result-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
           </div>
-          <div class="deliverable-text">
-            <h3>Routines planifi&eacute;es</h3>
-            <p>Des t&acirc;ches r&eacute;currentes param&eacute;tr&eacute;es (revue hebdo, veille, suivi projets).</p>
+          <div class="result-text">
+            <h3>Un coach pour progresser</h3>
+            <p>Un assistant d&eacute;di&eacute; qui vous aide chaque semaine &agrave; mieux utiliser l'IA, sans formation lourde.</p>
           </div>
+        </div>
+        <div class="result-card reveal">
+          <div class="result-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <div class="result-text">
+            <h3>Un miroir pour r&eacute;fl&eacute;chir</h3>
+            <p>Un espace de prise de recul adapt&eacute; &agrave; votre profil et votre style de pens&eacute;e.</p>
+          </div>
+        </div>
+        <div class="result-card reveal">
+          <div class="result-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="result-text">
+            <h3>Des rappels automatiques</h3>
+            <p>Revue hebdo, veille, suivi projets&hellip; L'IA vous relance sans que vous ayez &agrave; y penser.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cr&eacute;dibilit&eacute; -->
+  <section class="cred-section">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-label">&Agrave; propos</div>
+        <h2>Con&ccedil;u par une consultante<br>qui <em>conna&icirc;t vos probl&egrave;mes</em></h2>
+      </div>
+      <div class="cred-card reveal">
+        <div class="cred-avatar">CS</div>
+        <div class="cred-body">
+          <h3>Catherine Selosse</h3>
+          <p class="cred-role">Consultante strat&eacute;gique &bull; CS Consulting</p>
+          <p>J'accompagne des dirigeants de TPE depuis plusieurs ann&eacute;es. Je vois chaque jour le m&ecirc;me probl&egrave;me : vous savez que l'IA peut vous aider, mais vous n'avez ni le temps ni la m&eacute;thode pour la configurer correctement.</p>
+          <p>CS Digital Setup est n&eacute; de cette frustration. J'ai cr&eacute;&eacute; un outil qui fait en 45 minutes ce qu'un consultant facturerait 500 &euro;+ &mdash; avec la m&ecirc;me profondeur d'analyse, parce que les bonnes questions comptent plus que les bonnes r&eacute;ponses.</p>
         </div>
       </div>
     </div>
@@ -194,30 +1029,30 @@
   <!-- T&eacute;moignages -->
   <section id="testimonials">
     <div class="container">
-      <div class="section-title">
-        <h2>Ils l'ont <span>test&eacute;</span></h2>
-        <p>Retours de nos premiers utilisateurs.</p>
+      <div class="section-head reveal">
+        <div class="section-label">Retours</div>
+        <h2>Ils ont lanc&eacute; <em>leur diagnostic</em></h2>
       </div>
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">&starf;&starf;&starf;&starf;&starf;</div>
-          <blockquote>&laquo; J'utilisais Claude depuis des mois mais l&agrave;, c'est comme si on avait d&eacute;bloqu&eacute; un autre niveau. Les projets et agents sont pile adapt&eacute;s &agrave; mon activit&eacute;. &raquo;</blockquote>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">S</div>
+      <div class="testi-grid">
+        <div class="testi-card reveal">
+          <div class="testi-stars">&starf;&starf;&starf;&starf;&starf;</div>
+          <blockquote>&laquo; J'utilisais l'IA depuis des mois mais l&agrave;, c'est un autre niveau. Les espaces sont pile adapt&eacute;s &agrave; mon quotidien &mdash; emails clients, d&eacute;clarations, notes de synth&egrave;se. &raquo;</blockquote>
+          <div class="testi-author">
+            <div class="testi-av">S</div>
             <div>
-              <div class="testimonial-name">St&eacute;phanie B.</div>
-              <div class="testimonial-role">Experte-comptable</div>
+              <div class="testi-name">St&eacute;phanie B.</div>
+              <div class="testi-role">Experte-comptable &bull; Cabinet ind&eacute;pendant</div>
             </div>
           </div>
         </div>
-        <div class="testimonial-card">
-          <div class="testimonial-stars">&starf;&starf;&starf;&starf;&starf;</div>
-          <blockquote>&laquo; C'est comme si quelqu'un avait pris le temps de comprendre comment je fonctionne, et avait configur&eacute; Claude pour moi. J'ai gagn&eacute; un temps fou d&egrave;s le lendemain. &raquo;</blockquote>
-          <div class="testimonial-author">
-            <div class="testimonial-avatar">C</div>
+        <div class="testi-card reveal">
+          <div class="testi-stars">&starf;&starf;&starf;&starf;&starf;</div>
+          <blockquote>&laquo; C'est comme si quelqu'un avait pris le temps de comprendre comment je fonctionne. D&egrave;s le lendemain, j'ai gagn&eacute; un temps fou sur la r&eacute;daction et la planification. &raquo;</blockquote>
+          <div class="testi-author">
+            <div class="testi-av">C</div>
             <div>
-              <div class="testimonial-name">Clo&eacute; M.</div>
-              <div class="testimonial-role">Dirigeante</div>
+              <div class="testi-name">Clo&eacute; M.</div>
+              <div class="testi-role">Dirigeante &bull; Agence de communication</div>
             </div>
           </div>
         </div>
@@ -226,28 +1061,32 @@
   </section>
 
   <!-- Pricing -->
-  <section id="pricing">
+  <section id="pricing" class="pricing-section">
     <div class="container">
-      <div class="section-title">
-        <h2>149 &euro; aujourd'hui. <span>Rembours&eacute; d&egrave;s demain.</span></h2>
-        <p>30 min gagn&eacute;es par jour &times; votre taux horaire = rentabilis&eacute; d&egrave;s la premi&egrave;re journ&eacute;e.</p>
+      <div class="section-head reveal">
+        <div class="section-label">Tarif</div>
+        <h2>Un investissement,<br><em>pas une d&eacute;pense</em></h2>
       </div>
-      <div class="pricing-card">
+      <div class="pricing-anchor reveal">
+        <p>Un consultant strat&eacute;gique facturerait <strong>500 &euro; minimum</strong> pour analyser votre fa&ccedil;on de travailler et configurer vos outils. Le diagnostic automatis&eacute; donne la m&ecirc;me profondeur d'analyse &mdash; pour une fraction du prix.</p>
+      </div>
+      <div class="pricing-box reveal">
         <div class="pricing-amount">149 &euro;</div>
-        <p class="pricing-desc">Paiement unique &bull; Acc&egrave;s imm&eacute;diat &bull; Sans abonnement</p>
+        <p class="pricing-once">Paiement unique &bull; Acc&egrave;s imm&eacute;diat &bull; Sans abonnement</p>
         <ul class="pricing-features">
-          <li>Diagnostic conversationnel approfondi (45 min &agrave; 1h) &mdash; r&eacute;ponses au clavier ou &agrave; la voix</li>
-          <li>Instructions personnalis&eacute;es Claude.ai</li>
-          <li>3 &agrave; 5 projets configur&eacute;s pour votre activit&eacute;</li>
-          <li>Agents sp&eacute;cialis&eacute;s pour votre m&eacute;tier</li>
-          <li>Agent Coach + Agent Miroir</li>
-          <li>Routines planifi&eacute;es</li>
-          <li>Livraison compl&egrave;te par email</li>
-          <li>Guide d'installation pas-&agrave;-pas</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Diagnostic conversationnel approfondi (45 min &agrave; 1h)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> L'IA vous reconna&icirc;t d&egrave;s la premi&egrave;re phrase</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 3 &agrave; 5 espaces d&eacute;di&eacute;s pour vos t&acirc;ches cl&eacute;s</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Assistants pr&ecirc;ts &agrave; l'emploi pour votre m&eacute;tier</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Coach IA + espace r&eacute;flexion int&eacute;gr&eacute;s</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Rappels et routines automatis&eacute;s</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Livraison par email + guide d'installation</li>
         </ul>
-        <a href="#" id="buy-btn" class="pricing-cta">Configurer mon Claude — 149 &euro;</a>
-        <p class="pricing-guarantee">TVA non applicable, art. 293 B du CGI &bull; Paiement s&eacute;curis&eacute; par Stripe</p>
-        <p class="pricing-guarantee" style="margin-top: 0.5rem;">Vous pouvez arr&ecirc;ter et reprendre &agrave; tout moment &mdash; pensez juste &agrave; revenir depuis le m&ecirc;me navigateur (Chrome ou Safari recommand&eacute;s &mdash; la dict&eacute;e vocale ne fonctionne pas sur Firefox).</p>
+        <a href="#" id="buy-btn-2" class="pricing-cta">Lancer mon diagnostic &mdash; 149 &euro;</a>
+        <p class="pricing-note">
+          TVA non applicable, art. 293 B du CGI &bull; Paiement s&eacute;curis&eacute; par Stripe<br>
+          Vous pouvez arr&ecirc;ter et reprendre &agrave; tout moment &mdash; revenez depuis le m&ecirc;me navigateur.
+        </p>
       </div>
     </div>
   </section>
@@ -255,45 +1094,38 @@
   <!-- FAQ -->
   <section id="faq">
     <div class="container">
-      <div class="section-title">
-        <h2>Questions <span>fr&eacute;quentes</span></h2>
+      <div class="section-head reveal">
+        <div class="section-label">FAQ</div>
+        <h2>Vos <em>questions</em></h2>
       </div>
       <div class="faq-list">
-        <div class="faq-item">
-          <button class="faq-question">J'ai besoin d'un abonnement Claude.ai ?</button>
-          <div class="faq-answer">
-            <p>Oui, CS Digital Setup g&eacute;n&egrave;re une configuration pour Claude.ai (gratuit ou Pro). Vous aurez besoin d'un compte Claude.ai pour utiliser votre configuration. Le plan gratuit suffit pour commencer.</p>
-          </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Est-ce que c'est compliqu&eacute; &agrave; installer ?</button>
+          <div class="faq-answer"><p>Pas du tout. Vous recevez tout par email avec un guide illustr&eacute;. L'installation, c'est du copier-coller &mdash; 15 &agrave; 20 minutes, sans aucune comp&eacute;tence technique.</p></div>
         </div>
-        <div class="faq-item">
+        <div class="faq-item reveal">
+          <button class="faq-question">J'ai besoin de quoi pour commencer ?</button>
+          <div class="faq-answer"><p>D'un compte Claude.ai (le plan gratuit suffit pour d&eacute;marrer, le plan Pro &agrave; 20 &euro;/mois pour en tirer le maximum). C'est tout.</p></div>
+        </div>
+        <div class="faq-item reveal">
           <button class="faq-question">Combien de temps dure le diagnostic ?</button>
-          <div class="faq-answer">
-            <p>Comptez entre 45 minutes et 1 heure pour le diagnostic. C'est un vrai &eacute;change approfondi &mdash; plus vous donnez de contexte, plus votre configuration sera pr&eacute;cise. Vous pouvez interrompre et reprendre plus tard, votre progression est sauvegard&eacute;e.</p>
-          </div>
+          <div class="faq-answer"><p>Entre 45 minutes et 1 heure. C'est un vrai &eacute;change &mdash; plus vous donnez de contexte, plus votre configuration sera pr&eacute;cise. Vous pouvez interrompre et reprendre plus tard.</p></div>
         </div>
-        <div class="faq-item">
-          <button class="faq-question">Je ne suis pas technique, c'est pour moi ?</button>
-          <div class="faq-answer">
-            <p>Absolument. CS Digital Setup est con&ccedil;u pour les dirigeant(e)s de TPE, pas pour les d&eacute;veloppeurs. Le diagnostic est conversationnel (vous r&eacute;pondez comme &agrave; un coll&egrave;gue) et le guide d'installation est en copier-coller.</p>
-          </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">C'est vraiment personnalis&eacute; ou c'est un template ?</button>
+          <div class="faq-answer"><p>Chaque configuration est g&eacute;n&eacute;r&eacute;e &agrave; partir de vos r&eacute;ponses. Deux dirigeants du m&ecirc;me secteur obtiendront des configurations diff&eacute;rentes parce que leur fa&ccedil;on de travailler est diff&eacute;rente.</p></div>
         </div>
-        <div class="faq-item">
-          <button class="faq-question">&Ccedil;a marche aussi avec ChatGPT ?</button>
-          <div class="faq-answer">
-            <p>La configuration est optimis&eacute;e pour Claude.ai d'Anthropic. Certains &eacute;l&eacute;ments (les instructions personnalis&eacute;es notamment) peuvent &ecirc;tre adapt&eacute;s &agrave; d'autres IA, mais le meilleur r&eacute;sultat sera avec Claude.</p>
-          </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">&Ccedil;a marche avec ChatGPT ?</button>
+          <div class="faq-answer"><p>La configuration est optimis&eacute;e pour Claude.ai. Certains &eacute;l&eacute;ments peuvent &ecirc;tre adapt&eacute;s &agrave; d'autres IA, mais le meilleur r&eacute;sultat sera avec Claude.</p></div>
         </div>
-        <div class="faq-item">
-          <button class="faq-question">Mes donn&eacute;es sont-elles s&eacute;curis&eacute;es ?</button>
-          <div class="faq-answer">
-            <p>Vos donn&eacute;es de diagnostic sont automatiquement supprim&eacute;es apr&egrave;s 90 jours. Elles ne sont utilis&eacute;es que pour g&eacute;n&eacute;rer votre configuration et ne sont jamais partag&eacute;es avec des tiers.</p>
-          </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Mes donn&eacute;es sont s&eacute;curis&eacute;es ?</button>
+          <div class="faq-answer"><p>Vos donn&eacute;es de diagnostic sont automatiquement supprim&eacute;es apr&egrave;s 90 jours. Elles ne servent qu'&agrave; g&eacute;n&eacute;rer votre configuration et ne sont jamais partag&eacute;es.</p></div>
         </div>
-        <div class="faq-item">
-          <button class="faq-question">Et si j'ai besoin d'aide pour aller plus loin ?</button>
-          <div class="faq-answer">
-            <p>CS Digital Setup est la premi&egrave;re &eacute;tape. Si vous souhaitez un accompagnement complet pour int&eacute;grer l'IA dans votre activit&eacute; (automatisations, strat&eacute;gie, formation), Catherine propose des programmes d'accompagnement sur mesure. <a href="https://csbusiness.fr" style="color: var(--terracotta);">D&eacute;couvrir les accompagnements</a></p>
-          </div>
+        <div class="faq-item reveal">
+          <button class="faq-question">Et si je veux aller plus loin ensuite ?</button>
+          <div class="faq-answer"><p>CS Digital Setup est la premi&egrave;re &eacute;tape. Pour un accompagnement complet (automatisations, strat&eacute;gie IA, formation), Catherine propose des programmes sur mesure. <a href="https://csbusiness.fr" style="color: var(--terracotta); font-weight: 500;">D&eacute;couvrir les accompagnements</a></p></div>
         </div>
       </div>
     </div>
@@ -301,10 +1133,13 @@
 
   <!-- CTA final -->
   <section class="final-cta">
-    <div class="container">
-      <h2>Pr&ecirc;t(e) &agrave; gagner <span>30 minutes par jour</span> ?</h2>
-      <p>Un Claude qui vous conna&icirc;t, c'est un Claude qui vous fait gagner du temps d&egrave;s la premi&egrave;re utilisation.</p>
-      <a href="#pricing" class="btn-primary">Configurer mon Claude — 149 &euro;</a>
+    <div class="container reveal">
+      <h2>30 minutes gagn&eacute;es <em>chaque jour</em>,<br>d&egrave;s demain</h2>
+      <p>Votre IA ne devinera jamais ce dont vous avez besoin. Dites-le-lui une bonne fois &mdash; et laissez-la travailler.</p>
+      <a href="#" class="btn-main" id="buy-btn-3">
+        <span>Lancer mon diagnostic &mdash; 149 &euro;</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
     </div>
   </section>
 
@@ -312,53 +1147,49 @@
   <footer class="footer">
     <div class="container">
       <p>&copy; 2026 CS Consulting Strat&eacute;gique &mdash; Catherine Selosse &bull; <a href="https://csbusiness.fr">csbusiness.fr</a></p>
-      <p style="margin-top: 0.5rem;">TVA non applicable, art. 293 B du CGI</p>
+      <p style="margin-top: 6px;">TVA non applicable, art. 293 B du CGI</p>
     </div>
   </footer>
 
   <script>
-    // FAQ toggle
+    // Scroll reveal
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+
+    // FAQ
     document.querySelectorAll('.faq-question').forEach(function(btn) {
       btn.addEventListener('click', function() {
         var item = this.parentElement;
-        var isOpen = item.classList.contains('open');
-        document.querySelectorAll('.faq-item.open').forEach(function(el) {
-          el.classList.remove('open');
-        });
-        if (!isOpen) {
-          item.classList.add('open');
-        }
+        var open = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(function(el) { el.classList.remove('open'); });
+        if (!open) item.classList.add('open');
       });
     });
 
     // Stripe Checkout
     var SUPABASE_URL = 'https://ptksijwyvecufcvcpntp.supabase.co';
-
-    document.querySelectorAll('#buy-btn, .nav-cta, .btn-primary').forEach(function(btn) {
+    document.querySelectorAll('#buy-btn, #buy-btn-2, #buy-btn-3, .nav-cta').forEach(function(btn) {
       btn.addEventListener('click', function(e) {
         if (this.getAttribute('href') === '#pricing' || this.getAttribute('href') === '#how') return;
         e.preventDefault();
-        this.textContent = 'Redirection...';
+        var s = this.querySelector('span');
+        if (s) { s.textContent = 'Redirection...'; } else { this.textContent = 'Redirection...'; }
         this.style.pointerEvents = 'none';
-
         fetch(SUPABASE_URL + '/functions/v1/create-checkout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({})
         })
         .then(function(r) { return r.json(); })
-        .then(function(data) {
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
-            alert('Erreur : ' + (data.error || 'Veuillez r\u00e9essayer.'));
-            location.reload();
-          }
+        .then(function(d) {
+          if (d.url) { window.location.href = d.url; }
+          else { alert('Erreur : ' + (d.error || 'Veuillez r\u00e9essayer.')); location.reload(); }
         })
-        .catch(function() {
-          alert('Erreur de connexion. Veuillez r\u00e9essayer.');
-          location.reload();
-        });
+        .catch(function() { alert('Erreur de connexion. Veuillez r\u00e9essayer.'); location.reload(); });
       });
     });
   </script>
