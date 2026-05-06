@@ -8,6 +8,59 @@
 // ============================================
 const SUPABASE_FUNCTIONS_URL =
   "https://ptksijwyvecufcvcpntp.supabase.co/functions/v1";
+const SUPABASE_URL = "https://ptksijwyvecufcvcpntp.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0a3NpandzeWVjdWZjdmNwbnRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzg0NzYsImV4cCI6MjA4OTkxNDQ3Nn0.DeuKi0nA_yXsNoJ8bt6OA_Jjuxop-79MGZYsYCy_icw";
+
+// ============================================
+// Auto-refresh JWT if expired
+// ============================================
+async function ensureValidJWT() {
+  var token = localStorage.getItem("jwt_token");
+  if (!token) return null;
+
+  // Decode JWT to check expiration (payload is base64 in part 2)
+  try {
+    var parts = token.split(".");
+    if (parts.length !== 3) return token;
+    var payload = JSON.parse(atob(parts[1]));
+    var nowSec = Math.floor(Date.now() / 1000);
+    // Refresh if expires in less than 5 minutes
+    if (payload.exp && payload.exp - nowSec > 300) {
+      return token;
+    }
+  } catch (e) {
+    return token;
+  }
+
+  // Token expired or about to — try refresh
+  var refreshToken = localStorage.getItem("refresh_token");
+  if (!refreshToken) return token;
+
+  try {
+    var res = await fetch(SUPABASE_URL + "/auth/v1/token?grant_type=refresh_token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (res.ok) {
+      var data = await res.json();
+      if (data.access_token) {
+        localStorage.setItem("jwt_token", data.access_token);
+        if (data.refresh_token) {
+          localStorage.setItem("refresh_token", data.refresh_token);
+        }
+        console.log("JWT refreshed successfully");
+        return data.access_token;
+      }
+    }
+  } catch (e) {
+    console.error("JWT refresh failed:", e);
+  }
+  return token;
+}
 
 // ============================================
 // Compression de l'historique
@@ -96,8 +149,8 @@ const promptLanguageSelect = document.getElementById("prompt-language");
 // Initialisation
 // ============================================
 async function init() {
-  // Extract JWT from localStorage (set by auth/callback.html after Stripe → magic link flow)
-  jwtToken = localStorage.getItem("jwt_token");
+  // Refresh JWT if expired, then read from localStorage
+  jwtToken = await ensureValidJWT();
   userEmail = localStorage.getItem("user_email");
 
   if (!jwtToken || !userEmail) {

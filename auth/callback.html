@@ -159,6 +159,8 @@
           throw new Error("Invalid token type");
         }
 
+        const refreshToken = params.get("refresh_token");
+
         if (!accessToken) {
           throw new Error("No access token provided");
         }
@@ -178,8 +180,9 @@
         const userData = await validateResponse.json();
         const userEmail = userData.email;
 
-        // Store JWT in localStorage
+        // Store JWT + refresh token in localStorage
         localStorage.setItem("jwt_token", accessToken);
+        localStorage.setItem("refresh_token", refreshToken || "");
         localStorage.setItem("user_email", userEmail);
 
         // Clear the URL hash (security + UX)
