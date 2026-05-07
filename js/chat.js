@@ -9,7 +9,10 @@
 const SUPABASE_FUNCTIONS_URL =
   "https://ptksijwyvecufcvcpntp.supabase.co/functions/v1";
 const SUPABASE_URL = "https://ptksijwyvecufcvcpntp.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0a3NpandzeWVjdWZjdmNwbnRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzg0NzYsImV4cCI6MjA4OTkxNDQ3Nn0.DeuKi0nA_yXsNoJ8bt6OA_Jjuxop-79MGZYsYCy_icw";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0a3Npand5dmVjdWZjdmNwbnRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzg0NzYsImV4cCI6MjA4OTkxNDQ3Nn0.DeuKi0nA_yXsNoJ8bt6OA_Jjuxop-79MGZYsYCy_icw";
+const APP_EMAIL_KEY = "cs_setup_user_email";
+const APP_RECOVERY_EMAIL_KEY = "cs_setup_recovery_email";
+const APP_PROMPT_LANGUAGE_KEY = "cs_setup_prompt_language";
 
 // ============================================
 // Auto-refresh JWT if expired
@@ -151,11 +154,11 @@ const promptLanguageSelect = document.getElementById("prompt-language");
 async function init() {
   // Refresh JWT if expired, then read from localStorage
   jwtToken = await ensureValidJWT();
-  userEmail = localStorage.getItem("user_email");
+  userEmail = localStorage.getItem(APP_EMAIL_KEY);
 
   if (!jwtToken || !userEmail) {
-    console.log("No JWT found, redirecting to home");
-    showError();
+    console.log("No JWT found, redirecting to login");
+    window.location.href = "auth/login.html";
     return;
   }
 
@@ -190,19 +193,22 @@ function chooseDiagnosticMode() {
       recoveryEmail = (recoveryEmailInput?.value || userEmail || "").trim().toLowerCase();
       promptLanguage = (promptLanguageSelect?.value || "fr").toLowerCase() === "en" ? "en" : "fr";
       if (recoveryEmail) {
-        localStorage.setItem("recovery_email", recoveryEmail);
+        localStorage.setItem(APP_RECOVERY_EMAIL_KEY, recoveryEmail);
       }
-      localStorage.setItem("prompt_language", promptLanguage);
+      localStorage.setItem(APP_PROMPT_LANGUAGE_KEY, promptLanguage);
       if (modeSelector) modeSelector.style.display = "none";
       resolve("deep");
     };
 
     if (recoveryEmailInput) {
-      recoveryEmailInput.value =
-        localStorage.getItem("recovery_email") || userEmail || "";
+      recoveryEmailInput.value = "";
+      // Some browsers re-apply autofill after paint; clear it again.
+      setTimeout(() => {
+        recoveryEmailInput.value = "";
+      }, 0);
     }
     if (promptLanguageSelect) {
-      promptLanguageSelect.value = localStorage.getItem("prompt_language") || "fr";
+      promptLanguageSelect.value = localStorage.getItem(APP_PROMPT_LANGUAGE_KEY) || "fr";
     }
     if (modeSelector) modeSelector.style.display = "block";
     modeStartBtn?.addEventListener("click", () => done(), { once: true });

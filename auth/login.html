@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f0f0f">
+  <title>Reconnexion — CS Digital Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/variables.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .panel {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+    }
+    h1 {
+      font-size: 1.25rem;
+      margin-bottom: 0.6rem;
+    }
+    p {
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 1.2rem;
+      font-size: 0.95rem;
+    }
+    label {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      padding: 0.75rem 0.9rem;
+      margin-bottom: 0.85rem;
+    }
+    input:focus {
+      outline: 2px solid rgba(200, 125, 93, 0.3);
+      border-color: var(--terracotta);
+    }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 0.8rem 1rem;
+      background: var(--terracotta);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .feedback {
+      margin-top: 0.85rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      min-height: 1.3rem;
+    }
+    .links {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+    .links a {
+      color: var(--terracotta);
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>Reprendre mon diagnostic</h1>
+    <p>Entrez votre email client pour recevoir un lien de reconnexion immédiatement.</p>
+
+    <label for="email">Votre email</label>
+    <input id="email" type="email" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="vous@entreprise.com">
+    <button id="send-btn" type="button">Envoyer un lien de connexion</button>
+    <div id="feedback" class="feedback"></div>
+
+    <div class="links">
+      <a href="/">Retour à l'accueil</a>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://ptksijwyvecufcvcpntp.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0a3Npand5dmVjdWZjdmNwbnRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzg0NzYsImV4cCI6MjA4OTkxNDQ3Nn0.DeuKi0nA_yXsNoJ8bt6OA_Jjuxop-79MGZYsYCy_icw";
+    const SEND_LOGIN_LINK_URL = SUPABASE_URL + "/functions/v1/send-login-link";
+    const APP_EMAIL_KEY = "cs_setup_user_email";
+
+    const emailInput = document.getElementById("email");
+    const sendBtn = document.getElementById("send-btn");
+    const feedback = document.getElementById("feedback");
+    const SEND_COOLDOWN_MS = 60000;
+    const SEND_COOLDOWN_KEY = "cs_setup_reauth_next_send_at";
+
+    // No auto-prefill: user explicitly enters the address.
+    emailInput.value = "";
+
+    function getRemainingCooldownMs() {
+      const next = Number(localStorage.getItem(SEND_COOLDOWN_KEY) || "0");
+      return Math.max(0, next - Date.now());
+    }
+
+    function setCooldown() {
+      localStorage.setItem(SEND_COOLDOWN_KEY, String(Date.now() + SEND_COOLDOWN_MS));
+    }
+
+    async function sendMagicLink() {
+      const email = (emailInput.value || "").trim().toLowerCase();
+      if (!email || !email.includes("@")) {
+        feedback.textContent = "Merci d'indiquer un email valide.";
+        return;
+      }
+
+      const remaining = getRemainingCooldownMs();
+      if (remaining > 0) {
+        feedback.textContent = `Merci d'attendre ${Math.ceil(remaining / 1000)} secondes avant un nouvel envoi.`;
+        return;
+      }
+
+      sendBtn.disabled = true;
+      feedback.textContent = "Envoi du lien en cours...";
+
+      try {
+        const res = await fetch(SEND_LOGIN_LINK_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            email: email
+          })
+        });
+        // Anti-enumeration: same response for success/failure.
+        setCooldown();
+        localStorage.setItem(APP_EMAIL_KEY, email);
+        feedback.textContent = "Si cet email est reconnu, un lien de connexion vient d'être envoyé.";
+      } catch (err) {
+        feedback.textContent = "Service temporairement indisponible. Réessayez dans 1 minute.";
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
+    sendBtn.addEventListener("click", sendMagicLink);
+    emailInput.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMagicLink();
+      }
+    });
+  </script>
+</body>
+</html>

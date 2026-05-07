@@ -65,6 +65,50 @@
       font-size: 0.9rem;
       line-height: 1.5;
     }
+    .reauth-form {
+      margin-top: 1.25rem;
+      text-align: left;
+    }
+    .reauth-label {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .reauth-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      padding: 0.75rem 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+    .reauth-input:focus {
+      outline: 2px solid rgba(200, 125, 93, 0.3);
+      border-color: var(--terracotta);
+    }
+    .reauth-btn {
+      width: 100%;
+      border: 0;
+      border-radius: var(--radius-md);
+      padding: 0.8rem 1rem;
+      background: var(--terracotta);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .reauth-btn[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .reauth-feedback {
+      margin-top: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      min-height: 1.2rem;
+    }
     .error-box a {
       color: var(--terracotta);
       text-decoration: none;
@@ -126,13 +170,100 @@
           Votre lien de connexion est invalide ou a expiré.<br>
           <a href="https://csbusiness.fr">Retour à l'accueil</a>
         </p>
+        <div class="reauth-form">
+          <label class="reauth-label" for="email-input">Recevoir un nouveau lien</label>
+          <input
+            id="email-input"
+            class="reauth-input"
+            type="email"
+            placeholder="vous@entreprise.com"
+            autocomplete="email"
+          >
+          <button id="send-link-btn" class="reauth-btn" type="button">
+            M'envoyer un nouveau lien
+          </button>
+          <p id="reauth-feedback" class="reauth-feedback"></p>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://ptksijwyvecufcvcpntp.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0a3NpandzeWVjdWZjdmNwbnRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzg0NzYsImV4cCI6MjA4OTkxNDQ3Nn0.DeuKi0nA_yXsNoJ8bt6OA_Jjuxop-79MGZYsYCy_icw";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB0a3Npand5dmVjdWZjdmNwbnRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMzg0NzYsImV4cCI6MjA4OTkxNDQ3Nn0.DeuKi0nA_yXsNoJ8bt6OA_Jjuxop-79MGZYsYCy_icw";
+    const SEND_LOGIN_LINK_URL = SUPABASE_URL + "/functions/v1/send-login-link";
+    const REDIRECT_TO = "https://setup.csbusiness.fr/auth/callback.html";
+    const APP_EMAIL_KEY = "cs_setup_user_email";
+    const SEND_COOLDOWN_MS = 60000;
+    const SEND_COOLDOWN_KEY = "cs_setup_reauth_next_send_at";
+
+    function getRemainingCooldownMs() {
+      const next = Number(localStorage.getItem(SEND_COOLDOWN_KEY) || "0");
+      return Math.max(0, next - Date.now());
+    }
+
+    function setCooldown() {
+      localStorage.setItem(SEND_COOLDOWN_KEY, String(Date.now() + SEND_COOLDOWN_MS));
+    }
+
+    function decodeEmailFromJwt(token) {
+      try {
+        var parts = token.split(".");
+        if (parts.length !== 3) return "";
+        var payload = JSON.parse(atob(parts[1]));
+        return payload.email || "";
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function getEmailHintFromUrl() {
+      const query = new URLSearchParams(window.location.search);
+      return query.get("email") || "";
+    }
+
+    async function sendNewMagicLink() {
+      const emailInput = document.getElementById("email-input");
+      const sendBtn = document.getElementById("send-link-btn");
+      const feedback = document.getElementById("reauth-feedback");
+      const email = (emailInput?.value || "").trim().toLowerCase();
+
+      if (!email || !email.includes("@")) {
+        feedback.textContent = "Merci d'indiquer un email valide.";
+        return;
+      }
+
+      const remaining = getRemainingCooldownMs();
+      if (remaining > 0) {
+        feedback.textContent = `Merci d'attendre ${Math.ceil(remaining / 1000)} secondes avant un nouvel envoi.`;
+        return;
+      }
+
+      sendBtn.disabled = true;
+      feedback.textContent = "Envoi en cours...";
+
+      try {
+        const res = await fetch(SEND_LOGIN_LINK_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+          },
+          body: JSON.stringify({
+            email: email
+          })
+        });
+
+        // Anti-enumeration: same response for success/failure.
+        setCooldown();
+        feedback.textContent = "Si cet email est reconnu, un nouveau lien vient d'être envoyé.";
+      } catch (err) {
+        feedback.textContent = "Service temporairement indisponible. Réessaie dans 1 minute.";
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
 
     async function handleCallback() {
       const loadingState = document.getElementById("loading-state");
@@ -165,13 +296,7 @@
           throw new Error("No access token provided");
         }
 
-        // Decode JWT payload to extract email (token is already trusted — comes from Supabase Auth redirect)
-        var parts = accessToken.split(".");
-        if (parts.length !== 3) {
-          throw new Error("Invalid token format");
-        }
-        var payload = JSON.parse(atob(parts[1]));
-        var userEmail = payload.email;
+        var userEmail = decodeEmailFromJwt(accessToken);
 
         if (!userEmail) {
           throw new Error("No email in token");
@@ -180,7 +305,7 @@
         // Store JWT + refresh token in localStorage
         localStorage.setItem("jwt_token", accessToken);
         localStorage.setItem("refresh_token", refreshToken || "");
-        localStorage.setItem("user_email", userEmail);
+        localStorage.setItem(APP_EMAIL_KEY, userEmail);
 
         // Clear the URL hash (security + UX)
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -199,11 +324,15 @@
             timerEl.textContent = `Redirection en ${seconds} seconde${seconds > 1 ? "s" : ""}...`;
           } else {
             clearInterval(countdown);
-            window.location.href = "/chat.html";
+            window.location.href = "../chat.html";
           }
         }, 1000);
       } catch (err) {
         console.error("Auth error:", err);
+
+        // Clean potentially stale credentials from a previous session
+        localStorage.removeItem("jwt_token");
+        localStorage.removeItem("refresh_token");
 
         // Show error state
         loadingState.style.display = "none";
@@ -215,8 +344,19 @@
           ${err.message || "Une erreur est survenue lors de la connexion."}<br><br>
           <a href="https://csbusiness.fr">Retour à l'accueil</a>
         `;
+
+        // Pre-fill email to make re-auth immediate.
+        const hintFromStorage =
+          localStorage.getItem(APP_EMAIL_KEY) || "";
+        const hintFromUrl = getEmailHintFromUrl();
+        const emailInput = document.getElementById("email-input");
+        if (emailInput) {
+          emailInput.value = hintFromUrl || hintFromStorage || "";
+        }
       }
     }
+
+    document.getElementById("send-link-btn")?.addEventListener("click", sendNewMagicLink);
 
     // Run on page load
     handleCallback();

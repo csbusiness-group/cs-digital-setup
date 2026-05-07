@@ -24,7 +24,10 @@
   <!-- Ecran d'erreur -->
   <div id="error-screen" class="chat-error" style="display:none;">
     <h2>Session introuvable</h2>
-    <p>Ce lien n'est pas valide ou a expir&eacute;. V&eacute;rifiez le lien re&ccedil;u par email.</p>
+    <p>
+      Ce lien n'est pas valide ou a expir&eacute;.
+      <a href="auth/login.html" style="color:#c87d5d;">Recevoir un nouveau lien</a>
+    </p>
   </div>
 
   <!-- Interface chat -->
@@ -42,7 +45,7 @@
       <h3>Avant de commencer</h3>
       <p>Le diagnostic dure environ 45 minutes &agrave; 1 heure. Vous pouvez interrompre et reprendre &agrave; tout moment.</p>
       <label class="mode-email-label" for="recovery-email">Email de reprise (en cas d'interruption)</label>
-      <input id="recovery-email" class="mode-email-input" type="email" placeholder="vous@entreprise.com" />
+      <input id="recovery-email" class="mode-email-input" type="email" name="cs_setup_recovery_email_field" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="vous@entreprise.com" />
       <label class="mode-email-label" for="prompt-language">Langue des prompts livr&eacute;s</label>
       <select id="prompt-language" class="mode-email-input">
         <option value="fr">Fran&ccedil;ais</option>

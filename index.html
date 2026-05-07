@@ -110,6 +110,19 @@
       align-items: center;
       justify-content: space-between;
     }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .nav-login {
+      color: var(--text-body);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.25s;
+    }
+    .nav-login:hover { color: var(--terracotta); }
     .nav-brand {
       display: flex;
       align-items: center;
@@ -288,6 +301,19 @@
       color: var(--text-light);
       font-size: 13px;
       font-weight: 500;
+    }
+    .hero-reconnect {
+      margin-top: 12px;
+      font-size: 14px;
+      color: var(--text-body);
+    }
+    .hero-reconnect a {
+      color: var(--terracotta);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .hero-reconnect a:hover {
+      text-decoration: underline;
     }
 
     /* ---- Section shared ---- */
@@ -806,6 +832,8 @@
       .hero-proof { flex-direction: column; gap: 8px; }
       .cred-card { flex-direction: column; align-items: center; text-align: center; padding: 28px 24px; }
       .cost-section, .results-section, .final-cta { margin: 0 8px; }
+      .nav-login { font-size: 13px; }
+      .nav-cta { padding: 8px 16px; font-size: 13px; }
     }
   </style>
 </head>
@@ -818,7 +846,10 @@
         <div class="nav-logo">CS</div>
         <div class="nav-name">Digital Setup</div>
       </a>
-      <a href="#pricing" class="nav-cta">Lancer mon diagnostic</a>
+      <div class="nav-actions">
+        <a href="auth/login.html" class="nav-login">J'ai déjà payé</a>
+        <a href="#pricing" class="nav-cta">Lancer mon diagnostic</a>
+      </div>
     </div>
   </nav>
 
@@ -841,6 +872,7 @@
         </a>
         <a href="#how" class="btn-ghost">Comment &ccedil;a marche &darr;</a>
       </div>
+      <p class="hero-reconnect">D&eacute;j&agrave; client ? <a href="auth/login.html">Reconnexion en 10 secondes</a>.</p>
       <div class="hero-proof">
         <span class="hero-proof-item">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1154,7 +1186,7 @@
   <script>
     // Auth redirect: si un magic link atterrit ici, rediriger vers callback
     if (window.location.hash && (window.location.hash.includes('access_token=') || window.location.hash.includes('error='))) {
-      window.location.href = '/auth/callback.html' + window.location.hash;
+      window.location.href = 'auth/callback.html' + window.location.hash;
     }
 
     // Scroll reveal
