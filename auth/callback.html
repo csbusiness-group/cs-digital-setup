@@ -109,6 +109,13 @@
       color: var(--text-secondary);
       min-height: 1.2rem;
     }
+    .retention-note {
+      margin-top: 0.75rem;
+      margin-bottom: 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
     .error-box a {
       color: var(--terracotta);
       text-decoration: none;
@@ -176,13 +183,23 @@
             id="email-input"
             class="reauth-input"
             type="email"
+            name="cs_setup_reauth_email_input"
             placeholder="vous@entreprise.com"
-            autocomplete="email"
+            autocomplete="new-password"
+            autocapitalize="off"
+            autocorrect="off"
+            spellcheck="false"
           >
           <button id="send-link-btn" class="reauth-btn" type="button">
             M'envoyer un nouveau lien
           </button>
           <p id="reauth-feedback" class="reauth-feedback"></p>
+          <p class="retention-note">
+            Vos données de diagnostic sont conservées 90 jours puis supprimées automatiquement
+            (reprise de session, finalisation de la configuration, support post-livraison).
+            <a href="../politique-confidentialite.html">Politique de confidentialité</a> ·
+            <a href="../conditions-utilisation.html">Conditions d'utilisation</a>
+          </p>
         </div>
       </div>
     </div>
@@ -345,13 +362,14 @@
           <a href="https://csbusiness.fr">Retour à l'accueil</a>
         `;
 
-        // Pre-fill email to make re-auth immediate.
-        const hintFromStorage =
-          localStorage.getItem(APP_EMAIL_KEY) || "";
-        const hintFromUrl = getEmailHintFromUrl();
         const emailInput = document.getElementById("email-input");
         if (emailInput) {
-          emailInput.value = hintFromUrl || hintFromStorage || "";
+          emailInput.value = "";
+          emailInput.setAttribute("value", "");
+          setTimeout(() => {
+            emailInput.value = "";
+            emailInput.setAttribute("value", "");
+          }, 0);
         }
       }
     }

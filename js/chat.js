@@ -116,6 +116,8 @@ let configGenerationStarted = false;
 let recoveryEmail = null;
 let promptLanguage = "fr";
 let sessionStorageKey = null;
+let startIntent = "fresh";
+let hasExistingSession = false;
 
 // ============================================
 // Generate unique session ID for this diagnostic
@@ -142,9 +144,12 @@ const typingIndicator = document.getElementById("typing-indicator");
 const chatInput = document.getElementById("chat-input");
 const sendBtn = document.getElementById("send-btn");
 const generateNowBtn = document.getElementById("generate-now-btn");
-const newSessionBtn = document.getElementById("new-session-btn");
+const chatInputArea = document.querySelector(".chat-input-area");
 const modeSelector = document.getElementById("mode-selector");
 const modeStartBtn = document.getElementById("mode-start-btn");
+const resumeActions = document.getElementById("resume-actions");
+const resumeSessionBtn = document.getElementById("resume-session-btn");
+const legalConsentCheckbox = document.getElementById("legal-consent");
 const recoveryEmailInput = document.getElementById("recovery-email");
 const promptLanguageSelect = document.getElementById("prompt-language");
 
@@ -166,7 +171,8 @@ async function init() {
   sessionStorageKey = `last_session_id_${String(userEmail).toLowerCase()}`;
   const savedSessionId = localStorage.getItem(sessionStorageKey);
   const looksLikeUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  sessionId = savedSessionId && looksLikeUuid.test(savedSessionId)
+  hasExistingSession = Boolean(savedSessionId && looksLikeUuid.test(savedSessionId));
+  sessionId = hasExistingSession
     ? savedSessionId
     : generateSessionId();
   localStorage.setItem(sessionStorageKey, sessionId);
@@ -188,7 +194,10 @@ async function init() {
 
 function chooseDiagnosticMode() {
   return new Promise((resolve) => {
+    let doneCalled = false;
     const done = () => {
+      if (doneCalled) return;
+      doneCalled = true;
       diagnosticMode = "deep";
       recoveryEmail = (recoveryEmailInput?.value || userEmail || "").trim().toLowerCase();
       promptLanguage = (promptLanguageSelect?.value || "fr").toLowerCase() === "en" ? "en" : "fr";
@@ -197,6 +206,9 @@ function chooseDiagnosticMode() {
       }
       localStorage.setItem(APP_PROMPT_LANGUAGE_KEY, promptLanguage);
       if (modeSelector) modeSelector.style.display = "none";
+      if (resumeActions) resumeActions.style.display = "none";
+      if (messagesContainer) messagesContainer.style.display = "";
+      if (chatInputArea) chatInputArea.style.display = "";
       resolve("deep");
     };
 
@@ -210,8 +222,38 @@ function chooseDiagnosticMode() {
     if (promptLanguageSelect) {
       promptLanguageSelect.value = localStorage.getItem(APP_PROMPT_LANGUAGE_KEY) || "fr";
     }
+    if (legalConsentCheckbox) {
+      legalConsentCheckbox.checked = false;
+    }
+    const updateConsentState = () => {
+      if (modeStartBtn && modeStartBtn.style.display !== "none") {
+        modeStartBtn.disabled = !(legalConsentCheckbox && legalConsentCheckbox.checked);
+      }
+      if (resumeSessionBtn && resumeActions && resumeActions.style.display !== "none") {
+        resumeSessionBtn.disabled = !(legalConsentCheckbox && legalConsentCheckbox.checked);
+      }
+    };
+    if (modeStartBtn) {
+      modeStartBtn.style.display = hasExistingSession ? "none" : "";
+    }
+    if (resumeActions) {
+      resumeActions.style.display = hasExistingSession ? "flex" : "none";
+    }
+    // Force a true step-1 screen before any chat content is shown.
+    if (messagesContainer) messagesContainer.style.display = "none";
+    if (chatInputArea) chatInputArea.style.display = "none";
+    if (typingIndicator) typingIndicator.classList.remove("visible");
+    updateConsentState();
+    legalConsentCheckbox?.addEventListener("change", updateConsentState);
     if (modeSelector) modeSelector.style.display = "block";
-    modeStartBtn?.addEventListener("click", () => done(), { once: true });
+    modeStartBtn?.addEventListener("click", () => {
+      startIntent = "fresh";
+      done();
+    }, { once: true });
+    resumeSessionBtn?.addEventListener("click", () => {
+      startIntent = "resume";
+      done();
+    }, { once: true });
   });
 }
 
@@ -250,25 +292,6 @@ function resetChatVisualState() {
   sendBtn.disabled = false;
   if (generateNowBtn) generateNowBtn.disabled = false;
   chatInput.placeholder = "Tapez ou dictez votre réponse...";
-}
-
-async function startNewSession() {
-  if (isStreaming) return;
-  const ok = window.confirm(
-    "Démarrer une nouvelle session ? Votre session actuelle restera en base mais l'écran repartira de zéro."
-  );
-  if (!ok) return;
-
-  sessionId = generateSessionId();
-  if (sessionStorageKey) {
-    localStorage.setItem(sessionStorageKey, sessionId);
-  }
-  window.CS_SESSION_ID = sessionId;
-  conversationHistory = [];
-  configGenerationStarted = false;
-  resetChatVisualState();
-  diagnosticMode = await chooseDiagnosticMode();
-  await sendFirstMessage();
 }
 
 // ============================================
@@ -404,7 +427,9 @@ async function sendFirstMessage() {
       },
       body: JSON.stringify({
         session_id: sessionId,
-        message: `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je suis prêt(e) pour mon diagnostic.`,
+        message: startIntent === "resume"
+          ? `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je reprends ma session et je veux approfondir mon diagnostic sans répéter ce qui a déjà été traité.`
+          : `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je suis prêt(e) pour mon diagnostic.`,
         conversation_history: conversationHistory,
         client_name: userEmail,
       }),
@@ -459,9 +484,11 @@ async function sendFirstMessage() {
     conversationHistory.push({
       role: "user",
       content:
-        diagnosticMode === "deep"
-          ? `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
-          : `[DIAGNOSTIC_MODE:EXPRESS][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
+        startIntent === "resume"
+          ? `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je reprends ma session et je veux approfondir mon diagnostic sans répéter ce qui a déjà été traité.`
+          : diagnosticMode === "deep"
+            ? `[DIAGNOSTIC_MODE:DEEP][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic approfondi.`
+            : `[DIAGNOSTIC_MODE:EXPRESS][PROMPT_LANGUAGE:${promptLanguage.toUpperCase()}][RECOVERY_EMAIL:${recoveryEmail || userEmail}] Bonjour, je veux un diagnostic rapide et utile.`,
     });
     conversationHistory.push({ role: "assistant", content: cleanFinal });
   } catch (err) {
@@ -737,12 +764,6 @@ sendBtn.addEventListener("click", () => {
 });
 
 micBtn.addEventListener("click", toggleRecording);
-newSessionBtn?.addEventListener("click", () => {
-  startNewSession().catch((err) => {
-    console.error("New session error:", err);
-    appendMessage("assistant", "Erreur: impossible de démarrer une nouvelle session.");
-  });
-});
 generateNowBtn?.addEventListener("click", () => {
   if (isStreaming || configGenerationStarted) return;
   showDiagnosticComplete();

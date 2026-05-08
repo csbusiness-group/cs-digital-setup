@@ -315,6 +315,29 @@
     .hero-reconnect a:hover {
       text-decoration: underline;
     }
+    .hero-policy {
+      margin: 14px auto 0;
+      max-width: 720px;
+      text-align: left;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 12px 14px;
+      box-shadow: var(--shadow-sm);
+    }
+    .hero-policy p {
+      margin: 0 0 6px;
+      color: var(--ink-soft);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .hero-policy ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--text-body);
+      font-size: 13px;
+      line-height: 1.55;
+    }
 
     /* ---- Section shared ---- */
     section { padding: 80px 0; }
@@ -873,6 +896,16 @@
         <a href="#how" class="btn-ghost">Comment &ccedil;a marche &darr;</a>
       </div>
       <p class="hero-reconnect">D&eacute;j&agrave; client ? <a href="auth/login.html">Reconnexion en 10 secondes</a>.</p>
+      <div class="hero-policy">
+        <p>Avant de commencer (cadre clair)</p>
+        <ul>
+          <li>Plus vos r&eacute;ponses sont pr&eacute;cises, plus le diagnostic peut &ecirc;tre long, mais plus le r&eacute;sultat sera qualitatif et personnalis&eacute;.</li>
+          <li>Vous pouvez interrompre &agrave; tout moment et reprendre l&agrave; o&ugrave; vous en &eacute;tiez.</li>
+          <li>Les donn&eacute;es sont conserv&eacute;es 90 jours &agrave; partir de la g&eacute;n&eacute;ration de votre configuration, puis supprim&eacute;es automatiquement.</li>
+          <li>Si vous souhaitez r&eacute;cup&eacute;rer un &eacute;l&eacute;ment avant suppression, contactez Catherine avant l&rsquo;&eacute;ch&eacute;ance.</li>
+          <li>Conformit&eacute; RGPD : minimisation des donn&eacute;es, usage limit&eacute; au diagnostic et &agrave; la livraison.</li>
+        </ul>
+      </div>
       <div class="hero-proof">
         <span class="hero-proof-item">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1153,7 +1186,7 @@
         </div>
         <div class="faq-item reveal">
           <button class="faq-question">Mes donn&eacute;es sont s&eacute;curis&eacute;es ?</button>
-          <div class="faq-answer"><p>Vos donn&eacute;es de diagnostic sont automatiquement supprim&eacute;es apr&egrave;s 90 jours. Elles ne servent qu'&agrave; g&eacute;n&eacute;rer votre configuration et ne sont jamais partag&eacute;es.</p></div>
+          <div class="faq-answer"><p>Oui. Vos donn&eacute;es de diagnostic sont conserv&eacute;es 90 jours &agrave; partir de la g&eacute;n&eacute;ration de votre configuration, puis supprim&eacute;es automatiquement. Elles servent uniquement au diagnostic, &agrave; la livraison et au support court terme, dans un cadre RGPD.</p></div>
         </div>
         <div class="faq-item reveal">
           <button class="faq-question">Et si je veux aller plus loin ensuite ?</button>
@@ -1180,6 +1213,11 @@
     <div class="container">
       <p>&copy; 2026 CS Consulting Strat&eacute;gique &mdash; Catherine Selosse &bull; <a href="https://csbusiness.fr">csbusiness.fr</a></p>
       <p style="margin-top: 6px;">TVA non applicable, art. 293 B du CGI</p>
+      <p style="margin-top: 6px;">
+        <a href="politique-confidentialite.html">Politique de confidentialit&eacute;</a>
+        &bull;
+        <a href="conditions-utilisation.html">Conditions d'utilisation</a>
+      </p>
     </div>
   </footer>
 

@@ -38,12 +38,32 @@
         <div class="chat-header-title">CS Digital Setup</div>
         <div class="chat-header-subtitle">Configuration personnalis&eacute;e de votre Claude</div>
       </div>
-      <button id="new-session-btn" class="chat-new-session-btn" type="button">Nouvelle session</button>
     </header>
 
     <section id="mode-selector" class="mode-selector" style="display:none;">
       <h3>Avant de commencer</h3>
-      <p>Le diagnostic dure environ 45 minutes &agrave; 1 heure. Vous pouvez interrompre et reprendre &agrave; tout moment.</p>
+      <p>
+        Le diagnostic dure en g&eacute;n&eacute;ral 30 &agrave; 60 minutes.
+        Plus vos r&eacute;ponses sont pr&eacute;cises et d&eacute;taill&eacute;es, plus le diagnostic peut &ecirc;tre long
+        — mais plus la configuration finale sera qualitative et personnalis&eacute;e.
+      </p>
+      <p>
+        Vos donn&eacute;es de diagnostic sont conserv&eacute;es 90 jours puis supprim&eacute;es automatiquement
+        (reprise de session, finalisation de la configuration, support post-livraison).
+      </p>
+      <p>
+        Conformit&eacute; RGPD : minimisation des donn&eacute;es, usage limit&eacute; au diagnostic et &agrave; la livraison.
+        Besoin d'aide ? <a href="mailto:contact@csbusiness.fr">contact@csbusiness.fr</a>
+      </p>
+      <label class="mode-email-label" for="legal-consent" style="display:flex;align-items:flex-start;gap:8px;font-size:0.85rem;line-height:1.45;">
+        <input id="legal-consent" type="checkbox" style="margin-top:2px;">
+        <span>
+          J'ai lu et j'accepte la
+          <a href="politique-confidentialite.html" target="_blank" rel="noopener">Politique de confidentialit&eacute;</a>
+          et les
+          <a href="conditions-utilisation.html" target="_blank" rel="noopener">Conditions d'utilisation</a>.
+        </span>
+      </label>
       <label class="mode-email-label" for="recovery-email">Email de reprise (en cas d'interruption)</label>
       <input id="recovery-email" class="mode-email-input" type="email" name="cs_setup_recovery_email_field" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="vous@entreprise.com" />
       <label class="mode-email-label" for="prompt-language">Langue des prompts livr&eacute;s</label>
@@ -51,8 +71,11 @@
         <option value="fr">Fran&ccedil;ais</option>
         <option value="en">Anglais</option>
       </select>
+      <div id="resume-actions" class="mode-selector-actions" style="display:none;">
+        <button id="resume-session-btn" class="mode-btn primary" type="button">Reprendre et approfondir ma session</button>
+      </div>
       <div class="mode-selector-actions">
-        <button id="mode-start-btn" class="mode-btn primary" type="button">Lancer mon diagnostic</button>
+        <button id="mode-start-btn" class="mode-btn primary" type="button" disabled>OK, j'accepte ces conditions</button>
       </div>
     </section>
 

@@ -83,6 +83,12 @@
       margin-top: 1rem;
       font-size: 0.85rem;
     }
+    .retention-note {
+      margin-top: 0.85rem;
+      margin-bottom: 0;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
     .links a {
       color: var(--terracotta);
       text-decoration: none;
@@ -98,9 +104,15 @@
     <p>Entrez votre email client pour recevoir un lien de reconnexion immédiatement.</p>
 
     <label for="email">Votre email</label>
-    <input id="email" type="email" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="vous@entreprise.com">
+    <input id="email" type="email" name="cs_setup_login_email_input" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="vous@entreprise.com">
     <button id="send-btn" type="button">Envoyer un lien de connexion</button>
     <div id="feedback" class="feedback"></div>
+    <p class="retention-note">
+      Vos données de diagnostic sont conservées 90 jours puis supprimées automatiquement
+      (reprise de session, finalisation de la configuration, support post-livraison).
+      <a href="../politique-confidentialite.html">Politique de confidentialité</a> ·
+      <a href="../conditions-utilisation.html">Conditions d'utilisation</a>
+    </p>
 
     <div class="links">
       <a href="/">Retour à l'accueil</a>
@@ -120,7 +132,14 @@
     const SEND_COOLDOWN_KEY = "cs_setup_reauth_next_send_at";
 
     // No auto-prefill: user explicitly enters the address.
-    emailInput.value = "";
+    function forceEmptyEmailField() {
+      if (!emailInput) return;
+      emailInput.value = "";
+      emailInput.setAttribute("value", "");
+    }
+    forceEmptyEmailField();
+    setTimeout(forceEmptyEmailField, 0);
+    requestAnimationFrame(forceEmptyEmailField);
 
     function getRemainingCooldownMs() {
       const next = Number(localStorage.getItem(SEND_COOLDOWN_KEY) || "0");
