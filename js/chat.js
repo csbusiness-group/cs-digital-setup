@@ -273,7 +273,7 @@ function showDeviceError() {
   const errorTitle = errorScreen.querySelector("h2");
   const errorText = errorScreen.querySelector("p");
   if (errorTitle) errorTitle.textContent = "Lien personnel";
-  if (errorText) errorText.textContent = "Ce lien est associé à un autre appareil. Chaque configuration est personnelle et liée à l'appareil utilisé lors du premier accès. Contactez catherine@csbusiness.fr si vous avez besoin d'aide.";
+  if (errorText) errorText.textContent = "Ce lien est associé à un autre appareil. Chaque configuration est personnelle et liée à l'appareil utilisé lors du premier accès. Contactez setup@csbusiness.fr si vous avez besoin d'aide.";
 }
 
 function showChat() {

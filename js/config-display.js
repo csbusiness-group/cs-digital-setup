@@ -132,7 +132,7 @@ async function generateConfig(sessionId, jwtToken) {
     }
 
     document.getElementById("generation-indicator")?.remove();
-    displayConfig(fullConfig);
+    displayConfig(fullConfig, sessionId, jwtToken);
 
     // Config delivered — revoke refresh token to prevent re-use
     localStorage.removeItem("refresh_token");
@@ -149,7 +149,7 @@ async function generateConfig(sessionId, jwtToken) {
 // ============================================
 // Affichage du livrable RICHE (document HTML autonome, en iframe isolée)
 // ============================================
-function displayRichConfig(config) {
+function displayRichConfig(config, sessionId, jwtToken) {
   const container = document.getElementById("messages-container");
   const inputArea = document.querySelector(".chat-input-area");
   if (inputArea) inputArea.style.display = "none";
@@ -185,6 +185,39 @@ function displayRichConfig(config) {
     }
   });
   bar.appendChild(dl);
+
+  // Recevoir le guide par email (pièce jointe HTML, envoyée au compte connecté).
+  if (sessionId && jwtToken) {
+    const mail = document.createElement("button");
+    mail.type = "button";
+    mail.textContent = "✉︎  Recevoir par email";
+    mail.style.cssText =
+      "border:1px solid var(--terra,#C2714A);background:transparent;color:var(--terra,#C2714A);" +
+      "font-weight:600;font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer";
+    mail.addEventListener("click", async function () {
+      mail.disabled = true;
+      const original = mail.textContent;
+      mail.textContent = "Envoi en cours…";
+      try {
+        const res = await fetch(SUPABASE_FUNCTIONS_URL_CONFIG + "/send-config-email", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + jwtToken,
+          },
+          body: JSON.stringify({ session_id: sessionId }),
+        });
+        if (!res.ok) throw new Error("send failed " + res.status);
+        mail.textContent = "Envoyé ✓ (vérifiez vos spams)";
+      } catch (e) {
+        console.error("send email failed", e);
+        mail.textContent = "Échec — réessayez";
+        mail.disabled = false;
+        setTimeout(function () { mail.textContent = original; }, 4000);
+      }
+    });
+    bar.appendChild(mail);
+  }
   wrap.appendChild(bar);
 
   // Le livrable, rendu dans une iframe : isolation CSS totale, présentation
@@ -212,11 +245,11 @@ function displayRichConfig(config) {
 // ============================================
 // Affichage de la config
 // ============================================
-function displayConfig(config) {
+function displayConfig(config, sessionId, jwtToken) {
   // Livrable riche disponible → présentation stable en iframe, on court-circuite
   // l'ancien rendu déterministe (conservé en repli quand le riche est absent).
   if (config && typeof config.html_bundle === "string" && config.html_bundle.length > 500) {
-    displayRichConfig(config);
+    displayRichConfig(config, sessionId, jwtToken);
     return;
   }
 
@@ -732,7 +765,7 @@ function downloadGuideHtml(config) {
     '<footer>' +
     '<p><strong>CS Digital Setup \u2014 Votre configuration personnalis\u00e9e</strong></p>' +
     '<p style="margin-top:10px;font-size:0.9em">G\u00e9n\u00e9r\u00e9 le ' + esc(now) + ' | Session ' + esc(sessionId) + '</p>' +
-    '<p style="margin-top:20px;color:#999;font-size:0.85em">Support : <a href="mailto:catherine@csbusiness.fr">catherine@csbusiness.fr</a></p>' +
+    '<p style="margin-top:20px;color:#999;font-size:0.85em">Support : <a href="mailto:setup@csbusiness.fr">setup@csbusiness.fr</a></p>' +
     '</footer>\n' +
 
     '</div>\n' +
