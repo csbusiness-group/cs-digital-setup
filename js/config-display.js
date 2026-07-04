@@ -147,9 +147,79 @@ async function generateConfig(sessionId, jwtToken) {
 }
 
 // ============================================
+// Affichage du livrable RICHE (document HTML autonome, en iframe isolée)
+// ============================================
+function displayRichConfig(config) {
+  const container = document.getElementById("messages-container");
+  const inputArea = document.querySelector(".chat-input-area");
+  if (inputArea) inputArea.style.display = "none";
+
+  const wrap = document.createElement("div");
+  wrap.className = "rich-config-wrap";
+  // width:100% : #messages-container est une colonne flex — sans ça le wrap
+  // rétrécit à sa largeur minimale et l'iframe s'affiche en colonne étroite.
+  wrap.style.cssText = "width:100%;max-width:52rem;margin:0 auto;padding:8px 0 24px";
+
+  // Barre d'actions : télécharger le guide.
+  const bar = document.createElement("div");
+  bar.style.cssText = "display:flex;justify-content:flex-end;gap:8px;margin:0 0 10px;padding:0 4px";
+  const dl = document.createElement("button");
+  dl.type = "button";
+  dl.textContent = "⬇︎  Télécharger le guide (HTML)";
+  dl.style.cssText =
+    "border:1px solid var(--terra,#C2714A);background:var(--terra,#C2714A);color:#fff;font-weight:600;" +
+    "font-size:13px;padding:8px 14px;border-radius:8px;cursor:pointer";
+  dl.addEventListener("click", function () {
+    try {
+      const blob = new Blob([config.html_bundle], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ma-configuration-claude.html";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    } catch (e) {
+      console.error("download failed", e);
+    }
+  });
+  bar.appendChild(dl);
+  wrap.appendChild(bar);
+
+  // Le livrable, rendu dans une iframe : isolation CSS totale, présentation
+  // identique à chaque fois (aucune collision avec les styles de la page).
+  // Hauteur = écran, défilement INTERNE à l'iframe : une iframe à la taille du
+  // document (30 000+ px) dépasse la surface de rendu de Chrome et le bas ne
+  // s'affiche jamais — on ne dimensionne donc PAS l'iframe sur son contenu.
+  const frame = document.createElement("iframe");
+  frame.setAttribute("title", "Votre configuration Claude");
+  frame.setAttribute("sandbox", "allow-scripts allow-popups allow-downloads");
+  frame.setAttribute("allow", "clipboard-write");
+  frame.style.cssText =
+    "width:100%;border:1px solid var(--hair,#E7DCCB);border-radius:12px;" +
+    "height:max(600px, calc(100vh - 190px));background:#FBF7F2";
+  frame.srcdoc = config.html_bundle;
+  wrap.appendChild(frame);
+
+  container.appendChild(wrap);
+  container.scrollTop = container.scrollHeight;
+
+  // Config delivered — revoke refresh token to prevent re-use.
+  localStorage.removeItem("refresh_token");
+}
+
+// ============================================
 // Affichage de la config
 // ============================================
 function displayConfig(config) {
+  // Livrable riche disponible → présentation stable en iframe, on court-circuite
+  // l'ancien rendu déterministe (conservé en repli quand le riche est absent).
+  if (config && typeof config.html_bundle === "string" && config.html_bundle.length > 500) {
+    displayRichConfig(config);
+    return;
+  }
+
   const container = document.getElementById("messages-container");
   document.querySelector(".chat-input-area").style.display = "none";
 
