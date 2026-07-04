@@ -235,6 +235,9 @@ function displayRichConfig(config, sessionId, jwtToken) {
   frame.srcdoc = config.html_bundle;
   wrap.appendChild(frame);
 
+  // Questionnaire de satisfaction (étoiles + témoignage) sous le livrable.
+  wrap.appendChild(createFeedbackSection());
+
   container.appendChild(wrap);
   container.scrollTop = container.scrollHeight;
 
@@ -896,6 +899,10 @@ function createFeedbackSection() {
     '</div>' +
     '<p class="feedback-rating-label" id="feedback-rating-label"></p>' +
     '<textarea id="feedback-comment" class="feedback-text" placeholder="Ce qui vous a plu, ce qui pourrait \u00eatre am\u00e9lior\u00e9..." rows="4"></textarea>' +
+    '<label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink-soft,#5C524A);margin:10px 0 4px;cursor:pointer">' +
+      '<input type="checkbox" id="feedback-consent" style="margin-top:2px;accent-color:var(--terra,#C2714A)">' +
+      '<span>J\u2019autorise CS Consulting Strat\u00e9gique \u00e0 publier mon avis comme t\u00e9moignage (pr\u00e9nom et activit\u00e9 uniquement, jamais votre email).</span>' +
+    '</label>' +
     '<button id="feedback-submit-btn" class="feedback-submit" onclick="submitFeedback()">Envoyer mon avis</button>' +
     '<p id="feedback-status" class="feedback-status"></p>';
 
@@ -963,6 +970,7 @@ async function submitFeedback() {
         rating: rating || null,
         comment: comment,
         feedback_type: "post_delivery",
+        testimonial_consent: Boolean(document.getElementById("feedback-consent")?.checked),
       }),
     });
 
