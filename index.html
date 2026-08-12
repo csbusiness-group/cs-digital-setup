@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#FBF7F2">
+  <meta name="theme-color" content="#FFFFFF">
   <title>CS Digital Setup — Votre IA configurée pour votre métier, une bonne fois pour toutes</title>
   <meta name="description" content="Un diagnostic conversationnel (1h30 à 2h) génère votre configuration IA sur mesure. Fini les réponses génériques — votre assistant comprend votre métier dès la première phrase. 349 € HT, satisfait ou remboursé 7 jours.">
   <meta property="og:title" content="CS Digital Setup — Votre IA configurée pour votre métier, une bonne fois pour toutes">
@@ -23,30 +23,30 @@
   <script defer src="https://cloud.umami.is/script.js" data-website-id="2b859da1-a437-4bf0-9620-3a427b439292"></script>
   <style>
     :root {
-      /* ---- Palette solaire / Catherine ---- */
-      --cream:        #FBF7F2;
-      --cream-deep:   #F3EDE4;
+      /* ---- Palette blanc & terre / Catherine ---- */
+      --cream:        #FFFFFF;
+      --cream-deep:   #F7F2EC;
       --sand:         #EDE5D8;
-      --terracotta:   #C2714A;
-      --terracotta-h: #D4835C;
+      --terracotta:   #A85C38;
+      --terracotta-h: #C06A44;
       --terracotta-bg:#FFF0E8;
-      --coral:        #E8926B;
-      --sage:         #7A9E87;
-      --sage-light:   #E8F0EB;
-      --ochre:        #D4A24E;
-      --ochre-light:  #FFF6E5;
-      --ink:          #2C2420;
-      --ink-soft:     #4A3F38;
-      --text-body:    #5C524A;
-      --text-light:   #8A7F76;
-      --text-faint:   #B0A69C;
-      --border:       rgba(44, 36, 32, 0.08);
-      --border-med:   rgba(44, 36, 32, 0.12);
+      --coral:        #C47A5A;
+      --sage:         #6B8F78;
+      --sage-light:   #EBF1ED;
+      --ochre:        #B8894A;
+      --ochre-light:  #FBF4E8;
+      --ink:          #1E1810;
+      --ink-soft:     #3A3028;
+      --text-body:    #5A4E44;
+      --text-light:   #8A7A6E;
+      --text-faint:   #B0A090;
+      --border:       rgba(30, 24, 16, 0.07);
+      --border-med:   rgba(30, 24, 16, 0.12);
       --white:        #FFFFFF;
-      --radius-md:    10px;
-      --radius-lg:    14px;
-      --radius-xl:    22px;
-      --radius-full:  999px;
+      --radius-md:    4px;
+      --radius-lg:    4px;
+      --radius-xl:    4px;
+      --radius-full:  4px;
       --shadow-sm:    0 1px 3px rgba(44,36,32,0.04), 0 4px 12px rgba(44,36,32,0.03);
       --shadow-md:    0 2px 8px rgba(44,36,32,0.05), 0 12px 36px rgba(44,36,32,0.06);
       --shadow-lg:    0 4px 12px rgba(44,36,32,0.06), 0 24px 60px rgba(44,36,32,0.08);
@@ -131,16 +131,9 @@
       color: var(--ink);
     }
     .nav-logo {
-      width: 38px; height: 38px;
-      background: var(--terracotta);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-      color: white;
-      letter-spacing: 0.5px;
+      height: 36px;
+      width: auto;
+      display: block;
     }
     .nav-name {
       font-weight: 600;
@@ -167,64 +160,88 @@
 
     /* ---- Hero ---- */
     .hero {
-      padding: 140px 0 80px;
-      text-align: center;
+      padding: 120px 0 80px;
       position: relative;
       overflow: hidden;
     }
-    /* Organic blob behind hero */
     .hero::before {
       content: '';
       position: absolute;
-      top: -120px;
-      right: -180px;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(ellipse, rgba(232, 146, 107, 0.12) 0%, rgba(232, 146, 107, 0) 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: float 8s ease-in-out infinite;
-    }
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: -80px;
-      left: -160px;
+      top: -80px;
+      right: -120px;
       width: 500px;
       height: 500px;
-      background: radial-gradient(ellipse, rgba(122, 158, 135, 0.1) 0%, rgba(122, 158, 135, 0) 70%);
+      background: radial-gradient(ellipse, rgba(232, 146, 107, 0.08) 0%, rgba(232, 146, 107, 0) 70%);
       border-radius: 50%;
       pointer-events: none;
-      animation: float 10s ease-in-out infinite 2s;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-text {
+      position: relative;
+    }
+
+    .hero-image {
+      display: none;
+      position: relative;
+    }
+    .hero-image img {
+      width: 100%;
+      max-width: 420px;
+      height: 520px;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: 2px;
+      display: block;
+      margin: 0 auto;
+      filter: brightness(0.97) contrast(1.02);
+    }
+    .hero-image::after {
+      content: '';
+      position: absolute;
+      inset: 12px -12px -12px 12px;
+      border: 1px solid var(--border-med);
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: -1;
     }
 
     .hero-eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--terracotta-bg);
+      background: transparent;
       color: var(--terracotta);
-      padding: 7px 18px;
-      border-radius: var(--radius-full);
-      font-size: 13px;
+      border: 1px solid rgba(194, 113, 74, 0.25);
+      padding: 6px 16px;
+      border-radius: 2px;
+      font-size: 12px;
       font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       margin-bottom: 28px;
       animation: fadeUp 0.7s ease both;
     }
     .hero-eyebrow .dot {
-      width: 7px; height: 7px;
+      width: 6px; height: 6px;
       background: var(--coral);
       border-radius: 50%;
     }
 
     .hero h1 {
       font-family: var(--font-display);
-      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      font-size: clamp(2.4rem, 5.5vw, 3.8rem);
       font-weight: 400;
-      line-height: 1.15;
-      margin-bottom: 20px;
+      line-height: 1.1;
+      margin-bottom: 24px;
       color: var(--ink);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.025em;
       animation: fadeUp 0.7s ease both 0.1s;
       position: relative;
     }
@@ -234,11 +251,11 @@
     }
 
     .hero-sub {
-      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      font-size: 1.05rem;
       color: var(--text-body);
-      max-width: 540px;
-      margin: 0 auto 36px;
-      line-height: 1.65;
+      max-width: 480px;
+      margin-bottom: 36px;
+      line-height: 1.7;
       animation: fadeUp 0.7s ease both 0.2s;
       position: relative;
     }
@@ -246,7 +263,7 @@
     .hero-ctas {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       gap: 14px;
       animation: fadeUp 0.7s ease both 0.3s;
       position: relative;
@@ -288,7 +305,7 @@
     .hero-proof {
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 24px;
       margin-top: 36px;
       animation: fadeUp 0.7s ease both 0.4s;
@@ -372,6 +389,121 @@
       max-width: 500px;
       margin: 0 auto;
       font-size: 15px;
+    }
+
+    /* ---- Product showcase ---- */
+    .product-showcase {
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .product-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 0;
+      background: var(--cream-deep);
+      border: 1px solid var(--border-med);
+      border-bottom: none;
+      border-radius: 6px 6px 0 0;
+      padding: 10px 12px 0;
+    }
+    .product-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      padding: 9px 20px 11px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      bottom: -1px;
+    }
+    .product-tab.active {
+      background: var(--ink);
+      color: white;
+      border-color: var(--ink);
+    }
+    .product-tab:not(.active):hover {
+      color: var(--ink);
+      background: rgba(30,24,16,0.06);
+    }
+    .product-frame {
+      background: var(--ink);
+      border-radius: 0 0 6px 6px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(30, 24, 16, 0.18), 0 8px 24px rgba(30, 24, 16, 0.1);
+    }
+    .product-frame-bar {
+      background: #2A2420;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .frame-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      flex-shrink: 0;
+    }
+    .frame-url {
+      margin-left: 12px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.02em;
+      font-family: var(--font-body);
+    }
+    .product-screen {
+      display: none;
+    }
+    .product-screen.active {
+      display: block;
+    }
+    .product-screen img {
+      width: 100%;
+      display: block;
+      height: auto;
+    }
+    .product-screen.preview {
+      position: relative;
+    }
+    .product-screen.preview img {
+      max-height: 440px;
+      object-fit: cover;
+      object-position: top;
+    }
+    .product-screen.preview::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 160px;
+      background: linear-gradient(to bottom, transparent, var(--ink));
+      pointer-events: none;
+    }
+    .product-preview-label {
+      background: var(--ink);
+      padding: 16px 24px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .product-preview-label span {
+      font-size: 13px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.03em;
+    }
+    .product-preview-label strong {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
     }
 
     /* ---- Cost / Problem ---- */
@@ -557,28 +689,30 @@
     /* ---- Credibility ---- */
     .cred-section { position: relative; }
     .cred-card {
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto;
       display: flex;
-      gap: 28px;
+      gap: 36px;
       align-items: flex-start;
-      padding: 36px;
+      padding: 40px;
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
+      border-radius: 2px;
       box-shadow: var(--shadow-md);
     }
     .cred-avatar {
-      width: 68px; height: 68px;
-      background: linear-gradient(135deg, var(--terracotta), var(--coral));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-display);
-      font-size: 26px;
-      color: white;
+      width: 88px; height: 88px;
+      border-radius: 2px;
+      overflow: hidden;
       flex-shrink: 0;
+      background: var(--sand);
+    }
+    .cred-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
     }
     .cred-body h3 {
       font-size: 18px;
@@ -838,13 +972,15 @@
       .pain-grid { grid-template-columns: 1fr 1fr; }
       .results-grid { grid-template-columns: 1fr 1fr; }
       .testi-grid { grid-template-columns: 1fr 1fr; }
-      .hero-ctas { flex-direction: row; justify-content: center; }
+      .hero-ctas { flex-direction: row; align-items: center; }
       .cost-section, .results-section, .final-cta { margin: 0; border-radius: 0; }
     }
 
     @media (min-width: 900px) {
       section { padding: 100px 0; }
       .hero { padding: 160px 0 100px; }
+      .hero-inner { grid-template-columns: 1fr 1fr; gap: 72px; }
+      .hero-image { display: block; }
       .pain-grid { grid-template-columns: repeat(3, 1fr); }
       .steps-wrap { grid-template-columns: repeat(3, 1fr); }
       .step { flex-direction: column; text-align: center; align-items: center; }
@@ -853,7 +989,7 @@
 
     @media (max-width: 639px) {
       .hero-proof { flex-direction: column; gap: 8px; }
-      .cred-card { flex-direction: column; align-items: center; text-align: center; padding: 28px 24px; }
+      .cred-card { flex-direction: column; align-items: flex-start; padding: 28px 24px; }
       .cost-section, .results-section, .final-cta { margin: 0 8px; }
       .nav-login { font-size: 13px; }
       .nav-cta { padding: 8px 16px; font-size: 13px; }
@@ -867,7 +1003,7 @@
   <nav class="nav">
     <div class="container">
       <a href="#" class="nav-brand">
-        <div class="nav-logo">CS</div>
+        <img src="assets/logo-cs.png" alt="CS Consulting Strat&eacute;gique" class="nav-logo">
         <div class="nav-name">Digital Setup</div>
       </a>
       <div class="nav-actions">
@@ -880,47 +1016,53 @@
   <!-- Hero -->
   <section class="hero">
     <div class="container">
-      <div class="hero-eyebrow">
-        <span class="dot"></span>
-        Diagnostic IA sur mesure &bull; 349 &euro; HT &bull; Satisfait ou rembours&eacute; 7 jours
-      </div>
-      <h1>Votre IA produit du tiède<br>parce qu'elle <em>ne sait pas qui vous êtes</em></h1>
-      <p class="hero-sub">
-        Vous lui r&eacute;expliquez votre m&eacute;tier &agrave; chaque conversation. Elle vous sort des r&eacute;ponses g&eacute;n&eacute;riques que n'importe qui aurait pu &eacute;crire.
-        En 1h30 &agrave; 2h, vous lui transmettez votre ADN professionnel &mdash; et elle devient enfin l'assistante qui vous conna&icirc;t par c&oelig;ur.
-      </p>
-      <div class="hero-ctas">
-        <a href="#" id="buy-btn" class="btn-main">
-          <span>Je lance mon diagnostic &mdash; 349 &euro;</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-        <a href="#how" class="btn-ghost">Comment &ccedil;a marche &darr;</a>
-      </div>
-      <p style="margin-top:10px; font-size:13px; color:var(--text-light);">Satisfait ou rembours&eacute; 7 jours &bull; Paiement s&eacute;curis&eacute; Stripe &bull; Sans abonnement</p>
-      <p class="hero-reconnect">D&eacute;j&agrave; client ? <a href="auth/login.html">Reconnexion en 10 secondes</a>.</p>
-      <div class="hero-policy">
-        <p>Avant de commencer (cadre clair)</p>
-        <ul>
-          <li>Plus vos r&eacute;ponses sont pr&eacute;cises, plus le diagnostic peut &ecirc;tre long, mais plus le r&eacute;sultat sera qualitatif et personnalis&eacute;.</li>
-          <li>Vous pouvez interrompre &agrave; tout moment et reprendre l&agrave; o&ugrave; vous en &eacute;tiez.</li>
-          <li>Les donn&eacute;es sont conserv&eacute;es 90 jours &agrave; partir de la g&eacute;n&eacute;ration de votre configuration, puis supprim&eacute;es automatiquement.</li>
-          <li>Si vous souhaitez r&eacute;cup&eacute;rer un &eacute;l&eacute;ment avant suppression, contactez Catherine avant l&rsquo;&eacute;ch&eacute;ance.</li>
-          <li>Conformit&eacute; RGPD : minimisation des donn&eacute;es, usage limit&eacute; au diagnostic et &agrave; la livraison.</li>
-        </ul>
-      </div>
-      <div class="hero-proof">
-        <span class="hero-proof-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Livr&eacute; par email
-        </span>
-        <span class="hero-proof-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Simple copier-coller
-        </span>
-        <span class="hero-proof-item">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Sans abonnement
-        </span>
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="hero-eyebrow">
+            <span class="dot"></span>
+            Diagnostic IA sur mesure &bull; 349 &euro; HT &bull; Satisfait ou rembours&eacute; 7 jours
+          </div>
+          <h1>Elle r&eacute;pond &agrave; tout le monde.<br>Pas encore <em>&agrave; vous</em>.</h1>
+          <p class="hero-sub">
+            Vous lui r&eacute;expliquez votre m&eacute;tier &agrave; chaque conversation.
+            En 1h30 &agrave; 2h, vous lui transmettez votre ADN professionnel &mdash;
+            et elle devient l&rsquo;assistante qui vous conna&icirc;t par c&oelig;ur.
+          </p>
+          <div class="hero-ctas">
+            <a href="#" id="buy-btn" class="btn-main">
+              <span>Je lance mon diagnostic &mdash; 349 &euro;</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+            <a href="#how" class="btn-ghost">Comment &ccedil;a marche &darr;</a>
+          </div>
+          <p style="margin-top:10px; font-size:13px; color:var(--text-light);">Satisfait ou rembours&eacute; 7 jours &bull; Paiement s&eacute;curis&eacute; Stripe &bull; Sans abonnement</p>
+          <p class="hero-reconnect">D&eacute;j&agrave; client ? <a href="auth/login.html">Reconnexion en 10 secondes</a>.</p>
+          <div class="hero-proof">
+            <span class="hero-proof-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Livr&eacute; par email
+            </span>
+            <span class="hero-proof-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Simple copier-coller
+            </span>
+            <span class="hero-proof-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Sans abonnement
+            </span>
+          </div>
+          <div class="hero-policy">
+            <p>Avant de commencer (cadre clair)</p>
+            <ul>
+              <li>Plus vos r&eacute;ponses sont pr&eacute;cises, plus le r&eacute;sultat sera de qualit&eacute; et personnalis&eacute;.</li>
+              <li>Vous pouvez interrompre &agrave; tout moment et reprendre l&agrave; o&ugrave; vous en &eacute;tiez.</li>
+              <li>Les donn&eacute;es sont conserv&eacute;es 90 jours puis supprim&eacute;es automatiquement. Conformit&eacute; RGPD.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="assets/cath-hero.jpg" alt="Catherine Selosse, consultante strat&eacute;gique" loading="eager">
+        </div>
       </div>
     </div>
   </section>
@@ -977,31 +1119,57 @@
       <div class="section-head reveal">
         <div class="section-label">Le processus</div>
         <h2>Deux demi-journ&eacute;es qui changent<br><em>votre fa&ccedil;on de travailler</em></h2>
-        <p>Un &eacute;change guid&eacute; en profondeur (1h30 &agrave; 2h), puis Catherine configure pour vous (1h30 &agrave; 2h). Pr&eacute;voyez une journ&eacute;e, ou deux demi-journ&eacute;es selon votre rythme.</p>
+        <p>Un diagnostic conversationnel approfondi (1h30 &agrave; 2h), puis votre configuration est g&eacute;n&eacute;r&eacute;e automatiquement. Pr&eacute;voyez 2 heures &agrave; votre rythme.</p>
       </div>
       <div class="steps-wrap">
         <div class="step reveal">
           <div class="step-num">1</div>
           <div class="step-body">
-            <h3>Vous r&eacute;pondez, il &eacute;coute</h3>
-            <p>Un chatbot vous pose les bonnes questions sur votre activit&eacute;, vos clients, vos fa&ccedil;ons de travailler. Comme un bon consultant, il creuse l&agrave; o&ugrave; &ccedil;a compte.</p>
+            <h3>Le diagnostic conversationnel</h3>
+            <p>Un chatbot vous pose les bonnes questions sur votre activit&eacute;, vos objectifs, vos clients, votre fa&ccedil;on de travailler &mdash; et vous challenge l&agrave; o&ugrave; &ccedil;a compte, comme un bon consultant.</p>
             <span class="step-tag">1h30 &agrave; 2h &bull; &agrave; votre rythme</span>
           </div>
         </div>
         <div class="step reveal">
           <div class="step-num">2</div>
           <div class="step-body">
-            <h3>L'IA g&eacute;n&egrave;re votre configuration</h3>
-            <p>Vos r&eacute;ponses sont analys&eacute;es pour cr&eacute;er un param&eacute;trage complet, adapt&eacute; &agrave; votre m&eacute;tier, vos priorit&eacute;s et votre fa&ccedil;on de penser.</p>
-            <span class="step-tag">2 minutes</span>
+            <h3>Votre configuration est g&eacute;n&eacute;r&eacute;e</h3>
+            <p>Vos r&eacute;ponses sont analys&eacute;es et votre configuration sur mesure est g&eacute;n&eacute;r&eacute;e automatiquement &mdash; agents, instructions, routines calibr&eacute;s sur votre m&eacute;tier et votre fonctionnement.</p>
+            <span class="step-tag">1h30 &agrave; 2h</span>
           </div>
         </div>
         <div class="step reveal">
           <div class="step-num">3</div>
           <div class="step-body">
-            <h3>Vous copiez-collez, c'est pr&ecirc;t</h3>
-            <p>Tout arrive par email avec un guide pas-&agrave;-pas. Si vous savez copier-coller, vous savez installer votre configuration.</p>
-            <span class="step-tag">15 &agrave; 20 min</span>
+            <h3>Vous installez, c'est pr&ecirc;t</h3>
+            <p>Tout arrive par email avec un guide illustr&eacute;. Si vous savez copier-coller, vous savez installer votre configuration.</p>
+            <span class="step-tag">1h30 &agrave; 2h</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aperçu produit -->
+      <div class="product-showcase reveal" style="margin-top:64px;">
+        <div class="product-tabs">
+          <button class="product-tab active" data-target="screen-chat">Le diagnostic</button>
+          <button class="product-tab" data-target="screen-result">La configuration livr&eacute;e</button>
+        </div>
+        <div class="product-frame">
+          <div class="product-frame-bar">
+            <span class="frame-dot"></span>
+            <span class="frame-dot"></span>
+            <span class="frame-dot"></span>
+            <span class="frame-url">setup.csbusiness.fr</span>
+          </div>
+          <div class="product-screen active" id="screen-chat">
+            <img src="assets/mockup-chat.png" alt="Interface du diagnostic conversationnel">
+          </div>
+          <div class="product-screen preview" id="screen-result">
+            <img src="assets/mockup-result.png" alt="Configuration IA livr&eacute;e">
+          </div>
+          <div class="product-preview-label" id="result-label" style="display:none;">
+            <span>Extrait &mdash; page&nbsp;1</span>
+            <strong>Livraison compl&egrave;te : 5 pages personnalis&eacute;es</strong>
           </div>
         </div>
       </div>
@@ -1082,12 +1250,14 @@
         <h2>Con&ccedil;u par une consultante<br>qui <em>conna&icirc;t vos probl&egrave;mes</em></h2>
       </div>
       <div class="cred-card reveal">
-        <div class="cred-avatar">CS</div>
+        <div class="cred-avatar">
+          <img src="assets/cath-hero.jpg" alt="Catherine Selosse">
+        </div>
         <div class="cred-body">
           <h3>Catherine Selosse</h3>
           <p class="cred-role">Consultante strat&eacute;gique &bull; CS Consulting</p>
-          <p>J'accompagne des dirigeants de TPE depuis plusieurs ann&eacute;es. Je vois chaque jour le m&ecirc;me probl&egrave;me : vous savez que l'IA peut vous aider, mais vous n'avez ni le temps ni la m&eacute;thode pour la configurer correctement.</p>
-          <p>CS Digital Setup est n&eacute; de cette frustration. J'ai cr&eacute;&eacute; un processus qui fait en une journ&eacute;e ce qu'un consultant facturerait <strong>800 &agrave; 1&nbsp;500 &euro;</strong> &mdash; avec la m&ecirc;me profondeur d'analyse, parce que les bonnes questions comptent plus que les bonnes r&eacute;ponses.</p>
+          <p>J'accompagne des dirigeants de TPE depuis plusieurs ann&eacute;es. Pendant 20 ans, j'ai fait tourner des syst&egrave;mes qui n'avaient pas le droit de tomber en panne, dans l'industrie automobile. Aujourd'hui, j'applique la m&ecirc;me exigence &agrave; l'IA des ind&eacute;pendants et des TPE. Experte IA r&eacute;f&eacute;renc&eacute;e Pays Basque Digital (&laquo; Osez l'IA &raquo;, minist&egrave;re de l'&Eacute;conomie).</p>
+          <p>CS Digital Setup est n&eacute; de cette frustration. J'ai cr&eacute;&eacute; un processus qui fait en 2 heures ce qu'un consultant facturerait <strong>800 &agrave; 1&nbsp;500 &euro;</strong> &mdash; avec la m&ecirc;me profondeur d'analyse, parce que les bonnes questions comptent plus que les bonnes r&eacute;ponses.</p>
         </div>
       </div>
     </div>
@@ -1171,17 +1341,17 @@
         <div class="pricing-amount">349 &euro; <span style="font-size:1.2rem; color:var(--text-light);">HT</span></div>
         <p class="pricing-once">Soit 418,80 &euro; TTC &bull; Paiement unique &bull; Sans abonnement</p>
         <ul class="pricing-features">
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Diagnostic conversationnel approfondi (1h30 &agrave; 2h)</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> L'IA vous reconna&icirc;t d&egrave;s la premi&egrave;re phrase</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 3 &agrave; 5 espaces d&eacute;di&eacute;s pour vos t&acirc;ches cl&eacute;s</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Assistants pr&ecirc;ts &agrave; l'emploi pour votre m&eacute;tier</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Coach IA + espace r&eacute;flexion int&eacute;gr&eacute;s</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Rappels et routines automatis&eacute;s</li>
-          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Livraison par email + guide d'installation</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Diagnostic conversationnel approfondi (11 volets, 1h30 &agrave; 2h)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 4 fichiers de configuration sur mesure (identit&eacute;, business, r&egrave;gles, agents)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> 7 agents configur&eacute;s : Miroir, Garde-Fou, S&eacute;curit&eacute;, Strat&eacute;gie, Admin, Planif, Am&eacute;lioration</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Routines daily, weekly, monthly calibr&eacute;es sur votre fonctionnement</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Guide d'installation pas-&agrave;-pas (15-20 min, du copier-coller)</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Action test J+1 : un sc&eacute;nario concret &agrave; tester d&egrave;s demain matin</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Conformit&eacute; RGPD (CNIL) et AI Act europ&eacute;en : donn&eacute;es conserv&eacute;es 90 jours, suppression sur demande</li>
         </ul>
         <a href="#" id="buy-btn-2" class="pricing-cta">Lancer mon diagnostic &mdash; 349 &euro;</a>
         <p class="pricing-note">
-          Satisfait ou rembours&eacute; 7 jours, sans question &bull; Paiement s&eacute;curis&eacute; par Stripe<br>
+          Satisfait ou rembours&eacute; 7 jours &bull; Formulaire de remboursement simple &bull; Paiement s&eacute;curis&eacute; par Stripe<br>
           Prix HT &bull; TVA 20% applicable &bull; Facture fournie &bull; Vous pouvez arr&ecirc;ter et reprendre &agrave; tout moment.
         </p>
       </div>
@@ -1206,7 +1376,7 @@
         </div>
         <div class="faq-item reveal">
           <button class="faq-question">Combien de temps dure le diagnostic ?</button>
-          <div class="faq-answer"><p>Pr&eacute;voyez 1h30 &agrave; 2h pour le diagnostic &mdash; plus vos r&eacute;ponses sont pr&eacute;cises, plus la configuration sera qualitative. Puis Catherine travaille 1h30 &agrave; 2h pour configurer votre setup. En tout : une journ&eacute;e, ou deux demi-journ&eacute;es selon votre rythme. Vous pouvez interrompre et reprendre &agrave; tout moment.</p></div>
+          <div class="faq-answer"><p>Pr&eacute;voyez 1h30 &agrave; 2h pour le diagnostic &mdash; plus vos r&eacute;ponses sont pr&eacute;cises, plus la configuration sera qualitative. Votre configuration est ensuite g&eacute;n&eacute;r&eacute;e automatiquement et livr&eacute;e par email. Vous pouvez interrompre et reprendre &agrave; tout moment.</p></div>
         </div>
         <div class="faq-item reveal">
           <button class="faq-question">C'est vraiment personnalis&eacute; ou c'est un template ?</button>
@@ -1218,11 +1388,11 @@
         </div>
         <div class="faq-item reveal">
           <button class="faq-question">Mes donn&eacute;es sont s&eacute;curis&eacute;es ?</button>
-          <div class="faq-answer"><p>Oui. Vos donn&eacute;es de diagnostic sont conserv&eacute;es 90 jours &agrave; partir de la g&eacute;n&eacute;ration de votre configuration, puis supprim&eacute;es automatiquement. Elles servent uniquement au diagnostic, &agrave; la livraison et au support court terme, dans un cadre RGPD.</p></div>
+          <div class="faq-answer"><p>Oui. Le diagnostic est conforme au RGPD et aux recommandations de la CNIL, ainsi qu'au r&egrave;glement europ&eacute;en sur l'IA (AI Act). Vos donn&eacute;es sont stock&eacute;es sur le cloud dans l'Union europ&eacute;enne, conserv&eacute;es 90 jours puis supprim&eacute;es automatiquement. Vous pouvez demander la suppression &agrave; tout moment. Aucune donn&eacute;e n'est partag&eacute;e avec des tiers.</p></div>
         </div>
         <div class="faq-item reveal">
           <button class="faq-question">Et si le r&eacute;sultat ne me convient pas ?</button>
-          <div class="faq-answer"><p>Satisfait ou rembours&eacute; sous 7 jours, sans condition et sans question. Envoyez un email &agrave; <a href="mailto:contact@csbusiness.fr" style="color: var(--terracotta);">contact@csbusiness.fr</a> et vous &ecirc;tes rembours&eacute; sous 48h.</p></div>
+          <div class="faq-answer"><p>Satisfait ou rembours&eacute; sous 7 jours. Un court formulaire de remboursement est &agrave; remplir (30 secondes). Remboursement sous 48h.</p></div>
         </div>
         <div class="faq-item reveal">
           <button class="faq-question">Et si je veux aller plus loin ensuite ?</button>
@@ -1278,6 +1448,18 @@
         var open = item.classList.contains('open');
         document.querySelectorAll('.faq-item.open').forEach(function(el) { el.classList.remove('open'); });
         if (!open) item.classList.add('open');
+      });
+    });
+
+    // Product tabs
+    document.querySelectorAll('.product-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.product-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.product-screen').forEach(function(s) { s.classList.remove('active'); });
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.target).classList.add('active');
+        var lbl = document.getElementById('result-label');
+        if (lbl) lbl.style.display = tab.dataset.target === 'screen-result' ? 'flex' : 'none';
       });
     });
 
