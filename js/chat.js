@@ -111,6 +111,7 @@ let sessionId = null;
 let sessionData = null;
 let isStreaming = false;
 let conversationHistory = [];
+let restoredMessages = [];
 let diagnosticMode = "deep";
 let configGenerationStarted = false;
 let recoveryEmail = null;
@@ -171,10 +172,13 @@ async function init() {
   sessionStorageKey = `last_session_id_${String(userEmail).toLowerCase()}`;
   const savedSessionId = localStorage.getItem(sessionStorageKey);
   const looksLikeUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  hasExistingSession = Boolean(savedSessionId && looksLikeUuid.test(savedSessionId));
-  sessionId = hasExistingSession
-    ? savedSessionId
-    : generateSessionId();
+  const lastConversation = await loadLastConversation();
+  restoredMessages = lastConversation?.messages || [];
+  hasExistingSession = Boolean(
+    lastConversation?.session_id || (savedSessionId && looksLikeUuid.test(savedSessionId))
+  );
+  sessionId = lastConversation?.session_id
+    || (hasExistingSession ? savedSessionId : generateSessionId());
   localStorage.setItem(sessionStorageKey, sessionId);
   window.CS_JWT_TOKEN = jwtToken;
   window.CS_SESSION_ID = sessionId;
@@ -185,11 +189,51 @@ async function init() {
 
     // User selects desired diagnostic depth before first question.
     diagnosticMode = await chooseDiagnosticMode();
-    await sendFirstMessage();
+    if (startIntent === "resume" && restoredMessages.length > 0) {
+      restoreConversation();
+    } else {
+      await sendFirstMessage();
+    }
   } catch (err) {
     console.error("Init error:", err);
     showError();
   }
+}
+
+// Dernière conversation du compte, pour reprendre depuis n'importe quel appareil.
+async function loadLastConversation() {
+  try {
+    const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({ resume: true }),
+    });
+    if (res.status === 401) {
+      localStorage.removeItem("jwt_token");
+      localStorage.removeItem("refresh_token");
+      jwtToken = null;
+      window.location.href = "auth/login.html";
+      return null;
+    }
+    return res.ok ? await res.json() : null;
+  } catch (err) {
+    console.error("Resume lookup failed:", err);
+    return null;
+  }
+}
+
+function restoreConversation() {
+  // Le tout premier message est le lancement automatique, jamais affiché.
+  const visible = restoredMessages[0].role === "user"
+    ? restoredMessages.slice(1)
+    : restoredMessages;
+  visible.forEach((m) => appendMessage(m.role, m.content));
+  conversationHistory = restoredMessages;
+  scrollToBottom();
+  chatInput.focus();
 }
 
 function chooseDiagnosticMode() {
@@ -439,7 +483,8 @@ async function sendFirstMessage() {
       throw new Error("Session expirée. Veuillez vous reconnecter.");
     }
     if (res.status === 403) {
-      throw new Error("Accès refusé. Veuillez vérifier votre paiement.");
+      const denied = await res.json().catch(() => ({}));
+      throw new Error(denied.error || "Accès refusé.");
     }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
@@ -542,7 +587,8 @@ async function sendMessage(text) {
       throw new Error("Session expirée. Veuillez vous reconnecter.");
     }
     if (res.status === 403) {
-      throw new Error("Accès refusé. Veuillez vérifier votre paiement.");
+      const denied = await res.json().catch(() => ({}));
+      throw new Error(denied.error || "Accès refusé.");
     }
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}`);

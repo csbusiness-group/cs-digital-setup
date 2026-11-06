@@ -347,6 +347,12 @@
       } catch (err) {
         console.error("Auth error:", err);
 
+        // Ancien lien recliqué alors que la session est encore ouverte : on reprend.
+        if (localStorage.getItem("refresh_token")) {
+          window.location.replace("../chat.html");
+          return;
+        }
+
         // Clean potentially stale credentials from a previous session
         localStorage.removeItem("jwt_token");
         localStorage.removeItem("refresh_token");
@@ -358,7 +364,7 @@
 
         const errorMsg = document.getElementById("error-message");
         errorMsg.innerHTML = `
-          ${err.message || "Une erreur est survenue lors de la connexion."}<br><br>
+          Chaque lien ne marche qu'une fois et pendant une durée limitée. Indiquez votre email ci-dessous pour en recevoir un nouveau : vous retrouverez votre diagnostic là où vous l'aviez laissé.<br><br>
           <a href="https://csbusiness.fr">Retour à l'accueil</a>
         `;
 
