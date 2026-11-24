@@ -186,7 +186,7 @@ function displayRichConfig(config, sessionId, jwtToken) {
   });
   bar.appendChild(dl);
 
-  // Recevoir le guide par email (pièce jointe HTML, envoyée au compte connecté).
+  // Recevoir le guide par email (pièces jointes HTML + PDF, envoyées au compte connecté).
   if (sessionId && jwtToken) {
     const mail = document.createElement("button");
     mail.type = "button";
@@ -220,6 +220,23 @@ function displayRichConfig(config, sessionId, jwtToken) {
   }
   wrap.appendChild(bar);
 
+  // Conservation : cette page disparaît, le mail (HTML + PDF) est la copie qui reste.
+  const keep = document.createElement("p");
+  keep.style.cssText =
+    "margin:0 4px 12px;padding:10px 14px;background:#fff;border:2px solid #B23B3B;border-radius:8px;" +
+    "font-size:14px;line-height:1.5;color:#2C2420";
+  const keepStrong = document.createElement("strong");
+  keepStrong.textContent = "Gardez votre guide. ";
+  keep.appendChild(keepStrong);
+  keep.appendChild(document.createTextNode(
+    "Il vous est envoy\u00e9 par mail, en HTML et en PDF, \u00e0 l'adresse de votre compte. " +
+    (config.online_until_label
+      ? "Cette page reste en ligne jusqu'au " + config.online_until_label + " inclus, puis elle est supprim\u00e9e. "
+      : "Cette page est supprim\u00e9e au bout de 90 jours. ") +
+    "Mail introuvable ? Cliquez sur \u00ab Recevoir par email \u00bb."
+  ));
+  wrap.appendChild(keep);
+
   // Le livrable, rendu dans une iframe : isolation CSS totale, présentation
   // identique à chaque fois (aucune collision avec les styles de la page).
   // Hauteur = écran, défilement INTERNE à l'iframe : une iframe à la taille du
@@ -231,7 +248,7 @@ function displayRichConfig(config, sessionId, jwtToken) {
   frame.setAttribute("allow", "clipboard-write");
   frame.style.cssText =
     "width:100%;border:1px solid var(--hair,#E7DCCB);border-radius:12px;" +
-    "height:max(600px, calc(100vh - 190px));background:#FBF7F2";
+    "height:max(600px, calc(100vh - 270px));background:#FBF7F2";
   frame.srcdoc = config.html_bundle;
   wrap.appendChild(frame);
 
